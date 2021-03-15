@@ -123,6 +123,7 @@ xkablevif = function(model, title="VIFs of the model", digits = 3, pos="left", b
 Read city and state csv files as a data frame and remove unnecessary columns.  
 
 ```{r q1}
+column_desc <- data.frame(read.csv('metadata.csv'))
 citydf <- data.frame(read.csv('city.csv'))
 statedf<-data.frame(read.csv('state.csv'))
 
@@ -204,6 +205,57 @@ xkablesummary(city_num, title = "summary of citydf1") # change back to citydf1 i
 xkablesummary(state_num,title = "summary of statedf1") # change back to statedf1 if unwanted #
 
 #The table is now looks a little weird below. Delete line 69 and the %>% above it if unwanted. #
+
+```
+
+``` {r}
+loadPkg('car')
+
+```
+
+``` {r}
+
+sun_per_direction = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east, data=citydf1)
+
+xkabledply(sun_per_direction)
+summary(sun_per_direction)
+vif(sun_per_direction)
+```
+``` {r}
+# Look at effect of directional facing buildings per different longitude/latitude (Cities in the north might have higher energy generation potential from south facing, and vice versa.)
+# "The geographic center of the contiguous United States as located in a 1918 survey is located at 39°50′ -98°35′, about 2.6 miles (4.2 km) northwest of the center of Lebanon, Kansas, approximately 12 miles (19 km) south of the Kansas–Nebraska border." source: https://en.wikipedia.org/wiki/Geographic_center_of_the_United_States#:~:text=The%20geographic%20center%20of%20the%20contiguous%20United%20States%20as%20located,of%20the%20Kansas%E2%80%93Nebraska%20border.
+
+north_us_city = subset(citydf1, lat_min >=39.5)
+south_us_city = subset(citydf1, lat_min <39.5)
+
+```
+
+``` {r}
+
+sun_per_direction_north = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east, data=north_us_city)
+sun_per_direction_south = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east, data=south_us_city)
+
+
+summary(sun_per_direction_north)
+vif(sun_per_direction_north)
+summary(sun_per_direction_south)
+vif(sun_per_direction_south)
+
+```
+
+``` {r}
+total_sun_north = lm(sunlight_total ~ sunlight_north, data=citydf1)
+total_sun_south = lm(sunlight_total ~ sunlight_south, data=citydf1)
+total_sun_east = lm(sunlight_total ~ sunlight_east, data=citydf1)
+total_sun_west = lm(sunlight_total ~ sunlight_west, data=citydf1)
+
+direction_anova = anova(total_sun_north, total_sun_south, total_sun_east, total_sun_west)
+
+direction_anova
+#summary(total_sun_north)
+#summary(total_sun_south)
+#summary(total_sun_east)
+#summary(total_sun_west)
 
 ```
 
