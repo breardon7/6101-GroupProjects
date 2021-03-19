@@ -302,7 +302,7 @@ mean_energy_per_north_panel_plot =
         geom_histogram(col = "red", fill = "black", alpha = 0.7) +
              ggtitle('Mean energy per north pannel') +
               labs(x = "Mean energy per pannel (kw)", y = "Frequency")
-mean_energy_per_panel_plot 
+mean_energy_per_north_panel_plot 
 
 #south panel
 mean_energy_per_south_panel_plot = 
@@ -352,6 +352,14 @@ mean_energy_per_panel_plot
 ```
 
 ```{r}
+citydf1=na.exclude(citydf1)
+citydf1$mean_energy_per_north_panel = citydf1$sunlight_north / citydf1$panels_north
+citydf1$mean_energy_per_south_panel = citydf1$sunlight_south / citydf1$panels_south
+citydf1$mean_energy_per_east_panel = citydf1$sunlight_east / citydf1$panels_east
+citydf1$mean_energy_per_west_panel = citydf1$sunlight_west / citydf1$panels_west
+citydf1$mean_energy_per_flat_panel = citydf1$sunlight_flat / citydf1$panels_flat
+citydf1$mean_energy_per_panel = citydf1$sunlight_total / citydf1$panels_total
+
 mean_total_north = mean(citydf1$mean_energy_per_north_panel) # There are a lot of data points
 mean_total_south = mean(citydf1$mean_energy_per_south_panel) # Calculate the total mean
 mean_total_east = mean(citydf1$mean_energy_per_east_panel)
