@@ -207,6 +207,49 @@ xkablesummary(state_num,title = "summary of statedf1") # change back to statedf1
 #The table is now looks a little weird below. Delete line 69 and the %>% above it if unwanted. #
 
 ```
+## Step-2  Exploratory Data Analysis
+# Find sunlight energy potential per panel per direction for each city
+#         i.e. sunlight_north / panels_north = estimated toal solar energy generation potential per panel in city x
+``` {r, create region column}
+northeast = c('Maine', 'New Hampshire', 'Vermont', 'Massachusetts', 'Rhode Island', 'Connecticut', 'New York', 'New Jersey', 'Pennsylvania')
+midwest = c('Ohio', 'Michigan', 'Indiana', 'Wisconsin', 'Illinois', 'Minnesota', 'Iowa', 'Missouri', 'North Dakota', 'South Dakota', 'Nebraska', 'Kansas')
+south = c('Delaware', 'Maryland', 'Virginia', 'West Virginia', 'Kentucky', 'North Carolina', 'South Carolina', 'Tennessee', 'Georgia', 'Florida', 'Alabama', 'Mississippi', 'Arkansas', 'Louisiana', 'Texas', 'Oklahoma')
+west = c('Montana', 'Idaho', 'Wyoming', 'Colorado', 'New Mexico', 'Arizona', 'Utah', 'Nevada', 'California', 'Oregon', 'Washington')
+
+loadPkg('dplyr')
+loadPkg('ggplot2')
+loadPkg('tidyr')
+
+citydf1  = citydf1 %>%
+  mutate(region = case_when(
+    state_name %in% south ~ 'south',
+    state_name %in% northeast ~ 'northeast',
+    state_name %in% midwest ~ 'midwest',
+    state_name %in% west ~ 'west',
+    TRUE ~ NA_character_
+)
+)
+citydf1 = citydf1 %>% drop_na(region)
+
+citydf1$region = factor(citydf1$region)
+
+city_count_per_region = ggplot(data = citydf1, aes(x = region)) + geom_bar() + ggtitle('Number of Cities Per Region')
+
+city_count_per_region
+
+
+```
+``` {r, solar energy generation per panel}
+
+citydf1$mean_energy_per_north_panel = citydf1$sunlight_north / citydf1$panels_north
+citydf1$mean_energy_per_south_panel = citydf1$sunlight_south / citydf1$panels_south
+citydf1$mean_energy_per_east_panel = citydf1$sunlight_east / citydf1$panels_east
+citydf1$mean_energy_per_west_panel = citydf1$sunlight_west / citydf1$panels_west
+citydf1$mean_energy_per_flat_panel = citydf1$sunlight_flat / citydf1$panels_flat
+citydf1$mean_energy_per_panel = citydf1$sunlight_total / citydf1$panels_total
+
+```
+
 
 ``` {r}
 loadPkg('car')
@@ -259,7 +302,7 @@ vif(offset)
 total_sun_north = lm(sunlight_total ~ sunlight_north, data=citydf1)
 total_sun_south = lm(sunlight_total ~ sunlight_south, data=citydf1)
 total_sun_east = lm(sunlight_total ~ sunlight_east, data=citydf1)
-total_sun_west = lm(sunlight_total ~ sunlight_west, data=citydf1)
+total_sun_west = lm(sunlight_total ~ sunlight_west, data2=citydf1)
 
 direction_anova = anova(total_sun_north, total_sun_south, total_sun_east, total_sun_west)
 
@@ -310,9 +353,10 @@ summary(sun_per_direction_south)
 vif(sun_per_direction_south)
 
 ```
+
 ``` {r}
 # testing out new model
-# VIF error might mean perfect collinearity
+# VIF error might mean perfect colinearity
 
 # lm_offset = lm(carbon_offset ~ kw_total + panels_total, sunlight_total, data = city_num) 
 # Old model
@@ -343,6 +387,8 @@ direction_anova
 #summary(total_sun_west)
 
 ```
+
+
 
 
 
