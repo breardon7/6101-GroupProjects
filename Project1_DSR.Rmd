@@ -325,20 +325,20 @@ mean_energy_per_east_panel_plot
 #west panel
 mean_energy_per_west_panel_plot = 
       ggplot(data = citydf1, 
-                 aes(x = mean_energy_per_east_panel)) +
+                 aes(x = mean_energy_per_west_panel)) +
         geom_histogram(col = "red", fill = "black", alpha = 0.7) +
              ggtitle('Mean energy per west panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_west_panel_plot 
 
 #flat panel
-mean_energy_per_panel_plot = 
+mean_energy_per_flat_panel_plot = 
       ggplot(data = citydf1, 
-                 aes(x = mean_energy_per_panel)) +
+                 aes(x = mean_energy_per_flat_panel)) +
         geom_histogram(col = "red", fill = "black", alpha = 0.7) +
              ggtitle('Mean energy per panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
-mean_energy_per_panel_plot
+mean_energy_per_flat_panel_plot
 
 #total
 
