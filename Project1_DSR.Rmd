@@ -386,6 +386,66 @@ region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow",
 #This is the boxplot of total sunlight in different regions. Make the boxes higher(thicker).   
 ```
 
+
+**carbon offset vs solar panels**
+```{r }
+cor.solar_panel <- cor(citydf1$carbon_offset,citydf1$panels_total)
+
+ggplot(citydf1, aes(x = panels_total, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(method = 'lm')+
+  labs(title='Carbon Offset vs Total Solar Panels', x = 'Total Solar Panels', y = 'Carbon Offset')+
+  annotate(geom='text',x=3.5e+7, y=8500000, label= 'Correlation = 0.964')
+
+cor.test(citydf1$carbon_offset,citydf1$panels_total)
+
+```
+**carbon offset vs Total Solar Energy Potential**
+```{r }
+ggplot(citydf1, aes(x = sunlight_total, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'red', method = 'lm')+
+  labs(title='Carbon Offset vs Total Solar Energy Potential', x = 'Total Solar Energy Potential', y = 'Carbon Offset') +
+  annotate(geom='text',x=1.5e+10, y=8500000, label= 'Correlation = 0.947')
+
+cor.test(citydf1$carbon_offset,citydf1$sunlight_total)
+```
+
+**carbon_offset vs panel directions (NSWE and flat)**
+```{r }
+ggplot(citydf1, aes(x = panels_north, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'blue', method = 'lm')+
+  labs(title='Carbon Offset vs Total Panels - North', x = 'Total Solar Energy Potential', y = 'Carbon Offset') 
+
+ggplot(citydf1, aes(x = panels_south, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'red', method = 'lm')+
+  labs(title='Carbon Offset vs Total Panels - South', x = 'Total Panels - South', y = 'Carbon Offset') 
+
+ggplot(citydf1, aes(x = panels_west, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'green', method = 'lm')+
+  labs(title='Carbon Offset vs Total Panels - West', x = 'Total Panels - West', y = 'Carbon Offset') 
+
+ggplot(citydf1, aes(x = panels_east, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'yellow', method = 'lm')+
+  labs(title='Carbon Offset vs Total Panels - East', x = 'Total Panels - East', y = 'Carbon Offset') 
+
+ggplot(citydf1, aes(x = panels_flat, y = carbon_offset)) +
+  geom_point()+
+  geom_smooth(color = 'pink', method = 'lm')+
+  labs(title='Carbon Offset vs Total Panels - Flat', x = 'Total Panels - Flat', y = 'Carbon Offset') 
+
+cor(citydf1$carbon_offset,citydf1$panels_north)
+cor(citydf1$carbon_offset,citydf1$panels_south)
+cor(citydf1$carbon_offset,citydf1$panels_east)
+cor(citydf1$carbon_offset,citydf1$panels_west)
+cor(citydf1$carbon_offset,citydf1$panels_flat)
+```
+
+
 # Step 3 - Model Building
 
 ``` {r, fig.height=12,fig.width=16}
@@ -467,6 +527,61 @@ vif(lm_offset)
 
 
 
+**Jichong's modeling work**
+
+model1, x variables are 
+1) total solar energy generation potential
+2) total number of solar panels
+``` {r}
+fit1 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total)
+summary(fit1)
+par(mfrow=c(2,2))
+plot(fit1)
+
+```
+
+model2, x variables are 
+1) total solar energy generation potential
+2) total number of solar panels
+3) regions
 
 
+``` {r}
+fit2 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region)
+summary(fit2)
+par(mfrow=c(2,2))
+plot(fit2)
 
+```
+
+model3, x variables are 
+1) total solar energy generation potential
+2) total number of solar panels
+3) regions
+4) panel flat (highest correlation with carbon_offset)
+
+``` {r}
+fit3 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region + citydf1$panels_flat)
+summary(fit3)
+par(mfrow=c(2,2))
+plot(fit3)
+
+
+```
+
+
+model4, x variables are 
+1) total solar energy generation potential
+2) total number of solar panels
+3) regions
+4) all 4 panel directions 
+
+best model out of 4
+``` {r}
+fit4 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region + citydf1$panels_flat + citydf1$panels_north + citydf1$panels_south + citydf1$panels_east + citydf1$panels_west)
+summary(fit3)
+par(mfrow=c(2,2))
+plot(fit4)
+
+
+```
