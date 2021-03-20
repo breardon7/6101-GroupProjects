@@ -449,7 +449,7 @@ vif(sun_per_direction_south)
 total_sun_north = lm(sunlight_total ~ sunlight_north, data=citydf1)
 total_sun_south = lm(sunlight_total ~ sunlight_south, data=citydf1)
 total_sun_east = lm(sunlight_total ~ sunlight_east, data=citydf1)
-total_sun_west = lm(sunlight_total ~ sunlight_west, data2=citydf1)
+total_sun_west = lm(sunlight_total ~ sunlight_west, data=citydf1)
 
 direction_anova = anova(total_sun_north, total_sun_south, total_sun_east, total_sun_west)
 
