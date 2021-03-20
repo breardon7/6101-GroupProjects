@@ -261,8 +261,8 @@ citydf1$mean_energy_per_panel = citydf1$sunlight_total / citydf1$panels_total
 mean_energy_per_north_panel_plot = 
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_north_panel)) +
-        geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per north pannel') +
+        geom_histogram(col = "black", fill = "red", alpha = 0.7) +
+             ggtitle('Frequency of Mean Solar Energy Generated Per North Panel') +
               labs(x = "Mean energy per pannel (kw)", y = "Frequency")
 mean_energy_per_north_panel_plot 
 
@@ -270,8 +270,8 @@ mean_energy_per_north_panel_plot
 mean_energy_per_south_panel_plot = 
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_south_panel)) +
-        geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per south panel') +
+        geom_histogram(col = "black", fill = "yellow", alpha = 0.7) +
+             ggtitle('Frequency of Mean Solar Energy Generated Per South Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_south_panel_plot 
 
@@ -279,8 +279,8 @@ mean_energy_per_south_panel_plot
 mean_energy_per_east_panel_plot = 
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_east_panel)) +
-        geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per east panel') +
+        geom_histogram(col = "black", fill = "blue", alpha = 0.7) +
+             ggtitle('Frequency of Mean Solar Energy Generated Per East Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_east_panel_plot 
 
@@ -288,8 +288,8 @@ mean_energy_per_east_panel_plot
 mean_energy_per_west_panel_plot = 
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_east_panel)) +
-        geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per west panel') +
+        geom_histogram(col = "black", fill = "green", alpha = 0.7) +
+             ggtitle('Frequency of Mean Solar Energy Generated Per West Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_west_panel_plot 
 
@@ -297,10 +297,11 @@ mean_energy_per_west_panel_plot
 mean_energy_per_panel_plot = 
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_panel)) +
-        geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per panel') +
+        geom_histogram(col = "black", fill = "white", alpha = 0.7) +
+             ggtitle('Frequency of Mean Solar Energy Generated Per Flat Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_panel_plot
+Mean Solar Energy Generated Per Flat Panel
 
 #total
 
@@ -308,7 +309,7 @@ mean_energy_per_panel_plot =
       ggplot(data = citydf1, 
                  aes(x = mean_energy_per_panel)) +
         geom_histogram(col = "red", fill = "black", alpha = 0.7) +
-             ggtitle('Mean energy per panel') +
+             ggtitle('Frequency of Mean Solar Energy Generated Per Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_panel_plot 
 ```
@@ -332,10 +333,10 @@ mean_total_all = mean(citydf1$mean_energy_per_panel)
 # Add a simple table to display the total mean 
 mean_per_direction <- matrix(c(mean_total_north, mean_total_south, mean_total_east, mean_total_west, mean_total_flat, mean_total_all),ncol=6, nrow=1, byrow=FALSE)
 colnames(mean_per_direction) <- c("North","South","East","West","Flat","Total")
-rownames(mean_per_direction) <- "Total Mean"
+rownames(mean_per_direction) <- "Mean"
 mean_per_direction_table <- as.table(mean_per_direction)
 xkabledply(mean_per_direction_table, 
-             title = "Total mean of energy per pannel in each direction ")
+             title = "Estimated Mean Solar Energy Generated Per Panel By Direction")
 
 
 ```
@@ -343,12 +344,12 @@ xkabledply(mean_per_direction_table,
 ```{r boxplot}
 region_kw_total = ggplot(citydf1, aes(x = region, y = kw_total, col = region)) +
                     geom_boxplot() + ylim(0, 0.3e+06)+
-                    labs(title = "Kw generation Total VS Region", y = "Kw gerneration Total (Kw)")
+                    labs(title = "Kw generation Total By Region", y = "Kw gerneration Total (Kw)")
 region_kw_total
 
 region_carbon_offset = ggplot(citydf1, aes(x = region, y = carbon_offset, col = region)) +
                     geom_boxplot() + ylim(0, 0.3e+06)+
-                    labs(title = "Carbon Offset VS Region", y = "Carbon Offset")
+                    labs(title = "Carbon Offset By Region", y = "Carbon Offset")
 region_carbon_offset
 
 ```
@@ -366,7 +367,7 @@ solar_panels_region = ggplot(sumpanels_luffy,
                          facet_wrap(~region)+
                       theme(axis.ticks.x=element_blank(),
                             axis.text.x=element_blank())+
-                       labs(title = "Total Number of Solar Panels (per direction) VS Region",
+                       labs(title = "Total Number of Solar Panels (per direction) By Region",
                                 x = "Region", y = "Total number of solar pannels")
 solar_panels_region
 
@@ -376,23 +377,24 @@ solar_panels_region
 ```{r boxplot for different region and different roof}
 loadPkg("reshape2")
 citydf1_long <- melt(citydf1,measure.vars=21:25)
-region_plot <- ggplot(citydf1_long,aes(x=region,y=value,fill=variable)) +  geom_boxplot() + facet_grid(.~region, scales="free") +  labs(title = "region,roof and sunlight",x="region",y="sunlight") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+08)) + scale_fill_manual(values = c("red","yellow","blue","green","white"))
+region_plot <- ggplot(citydf1_long,aes(x=region,y=value,fill=variable)) +  geom_boxplot() + facet_grid(.~region, scales="free") +  labs(title = "Total Potential Solar Energy Generated Per Panel Direction By Region",x="Region",y="Total Potential Solar Energy Generated") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+08)) + scale_fill_manual(values = c("red","yellow","blue","green","white"))
 region_plot  
 # This is the plot to compare the sunlight potential for different roof types in different regions.
 
 region_sun_total = ggplot(citydf1,aes(x=region,y=sunlight_total,fill=region))
-region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow","blue","green")) + labs(title = "region and total sunlight",x="region",y="total sunlight") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+09))
+region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow","blue","green")) + labs(title = "Total Potential Solar Energy Generated Per Panel Direction",x="Region",y="Total Potential Solar Energy Generated") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+09))
 #This is the boxplot of total sunlight in different regions. Make the boxes higher(thicker).   
 ```
 
 # Step 3 - Model Building
 
 ``` {r, fig.height=12,fig.width=16}
+citynum_corr = subset(city_num, select = -c(lat_max, lat_min, lng_max, lng_min, lat_avg, lng_avg, kw_median, percent_qualified))
 loadPkg("car")
 loadPkg("corrplot")
 loadPkg("lattice")
-city_corr=cor(city_num)
-corrplot(city_corr, method = "number")
+city_corr=cor(citynum_corr)
+corrplot(city_corr, method = "number", type = 'upper')
 
 ```
 
