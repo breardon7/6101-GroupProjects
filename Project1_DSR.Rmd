@@ -353,6 +353,26 @@ region_carbon_offset
 
 ```
 
+```{R, fig.height=16pt, fig.width=20pt}
+# total number of solar panels(by region)
+loadPkg("reshape2") # have some fun with the tech downbelow from Qinyuan  ( ͡° ͜ʖ ͡°)
+sumpanels <- aggregate(cbind(panels_south, panels_east, panels_west, panels_north, panels_flat, panels_total)~region, citydf1, sum)
+
+sumpanels_luffy = melt(sumpanels, gomu=2:7)
+
+solar_panels_region = ggplot(sumpanels_luffy, 
+                             aes(x=variable, y = value, col=variable)) + 
+                        geom_bar(stat="identity")+
+                         facet_wrap(~region)+
+                      theme(axis.ticks.x=element_blank(),
+                            axis.text.x=element_blank())+
+                       labs(title = "Total Number of Solar Panels (per direction) VS Region",
+                                x = "Region", y = "Total number of solar pannels")
+solar_panels_region
+
+```
+
+
 ```{r boxplot for different region and different roof}
 loadPkg("reshape2")
 citydf1_long <- melt(citydf1,measure.vars=21:25)
