@@ -392,6 +392,10 @@ citydf1_long <- melt(citydf1,measure.vars=21:25)
 region_plot <- ggplot(citydf1_long,aes(x=region,y=value,fill=variable)) +  geom_boxplot() + facet_grid(.~region, scales="free") +  labs(title = "region,roof and sunlight",x="region",y="sunlight") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+08)) + scale_fill_manual(values = c("red","yellow","blue","green","white"))
 region_plot  
 # This is the plot to compare the sunlight potential for different roof types in different regions.
+
+region_sun_total = ggplot(citydf1,aes(x=region,y=sunlight_total,fill=region))
+region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow","blue","green")) + labs(title = "region and total sunlight",x="region",y="total sunlight") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+09))
+#This is the boxplot of total sunlight in different regions. Make the boxes higher(thicker).   
 ```
 
 # Step 3 - Model Building
