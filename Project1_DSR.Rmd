@@ -209,44 +209,6 @@ xkablesummary(state_num,title = "summary of statedf1") # change back to statedf1
 ```
 
 
-``` {r, fig.height=12,fig.width=16}
-loadPkg('car')
-loadPkg("corrplot")
-loadPkg("lattice")
-city_corr=cor(city_num)
-corrplot(city_corr, method = "number")
-
-```
-
-``` {r}
-
-sun_per_direction = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east + sunlight_flat, data=city_num)
-
-xkabledply(sun_per_direction)
-summary(sun_per_direction)
-vif(sun_per_direction)
-```
-
-``` {r}
-# Look at effect of directional facing buildings per different longitude/latitude (i.e. cities in the north might have higher energy generation potential from south facing, and vice versa.)
-# "The geographic center of the contiguous United States as located in a 1918 survey is located at 39°50′ -98°35′, about 2.6 miles (4.2 km) northwest of the center of Lebanon, Kansas, approximately 12 miles (19 km) south of the Kansas–Nebraska border." source: https://en.wikipedia.org/wiki/Geographic_center_of_the_United_States#:~:text=The%20geographic%20center%20of%20the%20contiguous%20United%20States%20as%20located,of%20the%20Kansas%E2%80%93Nebraska%20border.
-
-north_us_city = subset(city_num, lat_min >39.5)
-south_us_city = subset(city_num, lat_max <39.5)
-
-# Effect of north/south/east/west directional facing roofs on total estimated sunlight per city. Separated into two subsets: northern US cities (having a minimum latitude of 39.5 or greater) and southern US cities (having a maximum latitude of 39.5 or less). Subsets allow us to analyze if the different directional facings roofs have separate impacts depending on which part of the country they exist in.
-# Can subset further to measure effects per region (northeast, southeast, mid west, west, etc.)
-
-sun_per_direction_north = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east, data=north_us_city)
-sun_per_direction_south = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east, data=south_us_city)
-
-
-summary(sun_per_direction_north)
-vif(sun_per_direction_north)
-summary(sun_per_direction_south)
-vif(sun_per_direction_south)
-
-```
 
 ## Step-2  Exploratory Data Analysis
 
@@ -379,15 +341,20 @@ xkabledply(mean_per_direction_table,
 ```
 
 ```{r boxplot}
-region_sunlight_total = ggplot(citydf1, aes(x = region, y = sunlight_total, col = region) ) +
-                    geom_boxplot() +
-                      labs(title = "Sunlight Total VS Region", y = "Sunlight Total (Kw)")
-region_sunlight_total
-# Need some help here
+region_kw_total = ggplot(citydf1, aes(x = region, y = kw_total, col = region)) +
+                    geom_boxplot() + ylim(0, 0.3e+06)+
+                    labs(title = "Kw generation Total VS Region", y = "Kw gerneration Total (Kw)")
+region_kw_total
+
+region_carbon_offset = ggplot(citydf1, aes(x = region, y = carbon_offset, col = region)) +
+                    geom_boxplot() + ylim(0, 0.3e+06)+
+                    labs(title = "Carbon Offset VS Region", y = "Carbon Offset")
+region_carbon_offset
+
 ```
 
 ```{r boxplot for different region and different roof}
-library(reshape2)
+loadPkg("reshape2")
 citydf1_long <- melt(citydf1,measure.vars=21:25)
 region_plot <- ggplot(citydf1_long,aes(x=region,y=value,fill=variable)) +  geom_boxplot() + facet_grid(.~region, scales="free") +  labs(title = "region,roof and sunlight",x="region",y="sunlight") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+08)) + scale_fill_manual(values = c("red","yellow","blue","green","white"))
 region_plot  
@@ -401,7 +368,7 @@ region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow",
 # Step 3 - Model Building
 
 ``` {r, fig.height=12,fig.width=16}
-loadPkg('car')
+loadPkg("car")
 loadPkg("corrplot")
 loadPkg("lattice")
 city_corr=cor(city_num)
