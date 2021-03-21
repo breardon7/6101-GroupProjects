@@ -579,7 +579,7 @@ model4, x variables are
 best model out of 4
 ``` {r}
 fit4 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region + citydf1$panels_flat + citydf1$panels_north + citydf1$panels_south + citydf1$panels_east + citydf1$panels_west)
-summary(fit3)
+summary(fit4)
 par(mfrow=c(2,2))
 plot(fit4)
 
@@ -592,4 +592,9 @@ vif(fit1)
 vif(fit2)
 vif(fit3)
 vif(fit4)
+```
+Since model 4 has linearly dependent variables we remove `panels_total` from the model and we do vif test again.  
+```{r}
+fit5 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$region + citydf1$panels_flat + citydf1$panels_north + citydf1$panels_south + citydf1$panels_east + citydf1$panels_west)
+vif(fit5)
 ```
