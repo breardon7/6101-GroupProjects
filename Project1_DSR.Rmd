@@ -301,7 +301,7 @@ mean_energy_per_panel_plot =
              ggtitle('Frequency of Mean Solar Energy Generated Per Flat Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
 mean_energy_per_panel_plot
-Mean Solar Energy Generated Per Flat Panel
+#Mean Solar Energy Generated Per Flat Panel
 
 #total
 
@@ -311,7 +311,7 @@ mean_energy_per_panel_plot =
         geom_histogram(col = "red", fill = "black", alpha = 0.7) +
              ggtitle('Frequency of Mean Solar Energy Generated Per Panel') +
               labs(x = "Mean energy per panel (kw)", y = "Frequency")
-mean_energy_per_panel_plot 
+# mean_energy_per_panel_plot 
 ```
 
 ```{r}
@@ -533,7 +533,7 @@ model1, x variables are
 1) total solar energy generation potential
 2) total number of solar panels
 ``` {r}
-fit1 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total)
+fit1 <- lm(carbon_offset ~ sunlight_total + panels_total, data = citydf1)
 summary(fit1)
 par(mfrow=c(2,2))
 plot(fit1)
@@ -547,7 +547,7 @@ model2, x variables are
 
 
 ``` {r}
-fit2 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region)
+fit2 <- lm(carbon_offset ~ sunlight_total + panels_total + region, data = citydf1)
 summary(fit2)
 par(mfrow=c(2,2))
 plot(fit2)
@@ -561,7 +561,7 @@ model3, x variables are
 4) panel flat (highest correlation with carbon_offset)
 
 ``` {r}
-fit3 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region + citydf1$panels_flat)
+fit3 <- lm(carbon_offset ~ sunlight_total + panels_total + region + panels_flat, data = citydf1)
 summary(fit3)
 par(mfrow=c(2,2))
 plot(fit3)
@@ -578,7 +578,7 @@ model4, x variables are
 
 best model out of 4
 ``` {r}
-fit4 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$panels_total + citydf1$region + citydf1$panels_flat + citydf1$panels_north + citydf1$panels_south + citydf1$panels_east + citydf1$panels_west)
+fit4 <- lm(carbon_offset ~ sunlight_total + region + panels_flat + panels_north + panels_south + panels_east + panels_west, data = citydf1)
 summary(fit4)
 par(mfrow=c(2,2))
 plot(fit4)
@@ -589,7 +589,10 @@ plot(fit4)
 vif tests of the models above.
 ```{r}
 vif(fit1)
+
 vif(fit2)
+
 vif(fit3)
+
 vif(fit4)
 ```
