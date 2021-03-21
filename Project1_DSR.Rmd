@@ -585,3 +585,11 @@ plot(fit4)
 
 
 ```
+
+vif tests of the models above.
+```{r}
+vif(fit1)
+vif(fit2)
+vif(fit3)
+vif(fit4)
+```
