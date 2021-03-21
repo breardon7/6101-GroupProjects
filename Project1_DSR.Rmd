@@ -596,12 +596,3 @@ vif(fit3)
 
 vif(fit4)
 ```
-Since model 4 has linearly dependent variables we remove `panels_total` from the model and we do vif test again.  
-
-```{r}
-
-#fit5 <- lm(citydf1$carbon_offset ~ citydf1$sunlight_total + citydf1$region + citydf1$panels_flat + citydf1$panels_north + citydf1$panels_south + citydf1$panels_east + citydf1$panels_west)
-
-#vif(fit5)
-
-```
