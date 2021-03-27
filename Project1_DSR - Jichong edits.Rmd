@@ -386,7 +386,7 @@ cor.test(citydf1$carbon_offset,citydf1$panels_total)
 cor1 <- cor.test(citydf1$carbon_offset,citydf1$panels_total)
 
 ```
-The chart indicates that total number of solar panels have a significant relationship with carbon offset potential, and the coefficient is `r cor1$conf.int[1]`.
+The chart indicates that total number of solar panels have a significant relationship with carbon offset potential, and the coefficient is `r cor1$estimate`.
 
 
 ### 2.5.2 carbon offset vs Total Solar Energy Potential.
@@ -402,7 +402,7 @@ cor.test(citydf1$carbon_offset,citydf1$sunlight_total)
 cor2 <- cor.test(citydf1$carbon_offset,citydf1$sunlight_total)
 ```
 
-The chart indicates that the total energy potential have a significant relationship with carbon offset potential, and the coefficient is `r cor2$conf.int[1]`.
+The chart indicates that the total energy potential have a significant relationship with carbon offset potential, and the coefficient is `r cor2$estimate`.
 
 
 ### 2.5.3 carbon_offset vs panel directions (N,S,W,E and flat).
@@ -462,63 +462,11 @@ corrplot(city_corr, method = "number", type = 'upper')
 
 ```
 
-# 3 Linear Models 
+# 3 Linear Models - Models on Carbon offset  
 
-## 3.1 Models on sunlight_total
+Based on the previous EDA and correlation analysis, we picked the carbon offset potential as the dependent variable to build a linear model to determine effects of sunlight_total,panels_total,region and panels in all directions on `Carbon offset`. We are adding the independent variables step by step to find out the best model.
 
-### 3.1.1 Linear model to determine effects of sunlight generation potential in all the directions on total sunlight generation potential.  
-
-``` {r, results='markup'}
-
-sun_per_direction = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east + sunlight_flat, data=citydf1)
-
-xkabledply(sun_per_direction)
-summary(sun_per_direction)
-vif(sun_per_direction)
-```
-
-### 3.1.2 Linear models to determine effects of sunlight generation potential in all the directions on total sunlight generation potential in North and South section of USA separately.  
-``` {r, results='markup'}
-
-
-north_us_city = subset(citydf1, lat_min >39.5)
-south_us_city = subset(citydf1, lat_max <39.5)
-
-# Effect of north/south/east/west directional facing roofs on total estimated sunlight per city. Separated into two subsets: northern US cities (having a minimum latitude of 39.5 or greater) and southern US cities (having a maximum latitude of 39.5 or less). Subsets allow us to analyze if the different directional facings roofs have separate impacts depending on which part of the country they exist in.
-# Can subset further to measure effects per region (northeast, southeast, mid west, west, etc.)
-
-sun_per_direction_north = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east+sunlight_flat, data=north_us_city)
-sun_per_direction_south = lm(sunlight_total ~ sunlight_north + sunlight_south + sunlight_west + sunlight_east+sunlight_flat, data=south_us_city)
-
-
-summary(sun_per_direction_north)
-vif(sun_per_direction_north)
-summary(sun_per_direction_south)
-vif(sun_per_direction_south)
-
-```
-
-
-``` {r}
-# testing out new model
-# VIF error might mean perfect collinearity
-
-# lm_offset = lm(carbon_offset ~ kw_total + panels_total + sunlight_total, data = citydf1) 
-# Old model
-# Take a look at the corrplot above.  kw_total and panels_total has a coef of 1. 
-lm_offset = lm(carbon_offset ~ kw_total + count_existing , data = citydf1) 
-# new model
-summary(lm_offset)
-vif(lm_offset)
-
-```
-
-
-## 3.2 Models on Carbon offset  
-
-### 3.2.1 Linear models to determine effects of sunlight_total,panels_total,region and panels in all directions on `Carbon offset`.
-
-#### 3.2.1.1 model 1, dependent variables are:  
+## 3.1 model 1, dependent variables are:  
 1. total solar energy generation potential  
 2. total number of solar panels  
 ``` {r}
@@ -529,7 +477,11 @@ plot(fit1)
 
 ```
 
-#### 3.2.1.2 model 2, dependent variables are:  
+The model results show that **model 1** has a high Multiple R-squared of 0.937, meaning 93.7% data can be explained by the model. Total solar energy generation potential has a negative (coef = `r fit1$coefficients[2]`) relationship with carbon offset, and a `r fit1$coefficients[3]`relationship with carbon offset.
+
+The residual plot looks fine but the cook's distance value is too high.
+
+## 3.2 model 2, dependent variables are:  
 1. total solar energy generation potential  
 2. total number of solar panels  
 3. region  
@@ -543,7 +495,14 @@ plot(fit2)
 
 ```
 
-#### 3.2.1.3 model 3, dependent variables are:  
+The model 2 adds the variable `region`, the results show that **model 2** has a high Multiple R-squared of 0.94, meaning 94% data can be explained by the model. The relationship significance between total solar energy generation potential and carbon offset has increased to `r fit2$coefficients[2]`, and the relationship significance between total solar panel numbers and carbon offset has decreased to `r fit2$coefficients[3]`. 
+
+Looking at the region factor, all regions have a negative effect with carbon offset, and the West region has the most significant relationship with a coefficient value of `r fit2$coefficients[6]`, and the Northeast region has the lowest significant relationship with a coefficient value of `r fit2$coefficients[4]`.
+
+The residuals plot of **model 2** looks fine, the cook's distance has slightly improved compared with model 1 but still high.
+
+
+## 3.3 model 3, dependent variables are:  
 1. total solar energy generation potential  
 2. total number of solar panels  
 3. regions  
@@ -556,8 +515,12 @@ par(mfrow=c(2,2))
 plot(fit3)
 ```
 
+The model 3 adds the variable `total number of flat solar panels` given that the flat angle panel has the highest correlation with the dependent variable `carbon offset` from previous analysis. The results show that **model 3** also has a high Multiple R-squared of 0.94, meaning 94% data can be explained by the model. The variable `panels_flat` has a negative (coef = `r fit3$coefficients[7]`) relationship with carbon offset.
 
-#### 3.2.1.4 model 4, dependent variables are:  
+The residuals plot of **model 3** looks fine, but the cook's distance value is way too high.
+
+
+## 3.4 model 4, dependent variables are:  
 1. total solar energy generation potential  
 2. regions  
 3. all 5 panel directions  
@@ -570,7 +533,13 @@ par(mfrow=c(2,2))
 plot(fit4)
 ```
 
-#### 3.2.1.5 vif tests of the four models:
+Based on the modeling work from model 1-3, in order to get the best model, we removed `panels_total` because it causes multicollinearity, and we added all 5 solar panel directions including flat to build **model 4**. 
+
+The results show that **model 4** has the best Multiple R-squared so far at 0.95. The south-facing solar panels `panels_south` has the most significant relationship with carbon offset, with a coefficient value of `r fit4$coefficients[8]`, followed by east-facing panels with a coefficient value of `r fit4$coefficients[9]`. North- and West-facing panels have a negative influence on carbon offset, with coefficient values of `r fit4$coefficients[7]` and `r fit4$coefficients[10]` respectively.
+
+The residuals plot of **model 4** looks fine, and the cook's distance value finally looks good and it's below 1.
+
+## 3.5 vif tests of the four models:
 ```{r,results='markup'}
 vif(fit1)
 
