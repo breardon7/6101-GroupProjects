@@ -220,6 +220,10 @@ city_count_per_region =
 
 city_count_per_region
 ```
+
+From the bar chart above, it is obvious the south region has the most number of the cities, following by midwest, northeast and west. The number of the cities provides potential data points for the sample space. In other words, cities in the south region can have more potential solar panels installed. However, the potential number of solar panel installed is different from the actual number of solar panels installed. For the following analysis, we will be focuson the acutal solar panels installed in each region. 
+
+
 **Mean energy per panel in different directions.**  
 
 Find sunlight energy potential per panel per direction for each city.  
@@ -292,7 +296,7 @@ mean_energy_per_panel_plot =
 ```
 
 ```{r}
-
+citydf1 = na.exclude(citydf1)
 mean_total_north = mean(citydf1$mean_energy_per_north_panel) # There are a lot of data points
 mean_total_south = mean(citydf1$mean_energy_per_south_panel) # Calculate the total mean
 mean_total_east = mean(citydf1$mean_energy_per_east_panel)
@@ -310,6 +314,11 @@ xkabledply(mean_per_direction_table,
 
 
 ```
+From the histograms above, the mean solar energy absorbed in each position is right skewed distributed. Thus, the amount of energy per panel with the most frequency falls behind the overall mean in each position. 
+
+The summary table generate the overall mean of the solar energy absorbed in each position. The south facing (mean of 328 kw/panel) the panel and flat panel (mean of 315 kw/panel) have the most solar energy absorbed (General mean of 310 kw/panel). This result indicates that the south facing panel and flat panel are the two position with the highest capability of solar energy absorption. 
+
+
 
 ## 2.3 Boxplots  
 
@@ -320,6 +329,7 @@ region_carbon_offset = ggplot(citydf1, aes(x = region, y = carbon_offset, col = 
 region_carbon_offset
 
 ```
+
 ```{r boxplot for different region and different roof}
 loadPkg("reshape2")
 citydf1_long <- melt(citydf1,measure.vars=21:25)
@@ -337,13 +347,13 @@ region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow",
 
 ```{R, fig.height=16, fig.width=20}
 # total number of solar panels(by region)
-loadPkg("reshape2") # have some fun with the tech downbelow from Qinyuan  ( ͡° ͜ʖ ͡°)
+loadPkg("reshape2") # have some fun with the tech above from Qinyuan  ( ͡° ͜ʖ ͡°)
 sumpanels <- aggregate(cbind(panels_south, panels_east, panels_west, panels_north, panels_flat, panels_total)~region, citydf1, sum)
 
 sumpanels_luffy = melt(sumpanels, gomu=2:7)
 
 solar_panels_region = ggplot(sumpanels_luffy, 
-                             aes(x=variable, y = value, col=variable)) + 
+                             aes(x=variable, y = value, fill=variable)) + 
                         geom_bar(stat="identity")+
                          facet_wrap(~region)+
                       theme(axis.ticks.x=element_blank(),
@@ -353,6 +363,11 @@ solar_panels_region = ggplot(sumpanels_luffy,
 solar_panels_region
 
 ```
+
+The number of the solar panel is the potential data points that cities can provide. Overall, south region has the most number of installed solar panels. The second is west region which has the least number of cities counted. The least potential data points provider turns out to be the region with the second most of actual data points provided. 
+
+The flat panel and south-facing panel are the two most-installed panel in all 4 regions of United States. 
+
 
 ## 2.5 Scatter plots  
 
