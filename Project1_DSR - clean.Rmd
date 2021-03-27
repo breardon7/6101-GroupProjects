@@ -118,7 +118,7 @@ xkablevif = function(model, title="VIFs of the model", digits = 3, pos="left", b
 
 # 1 Introduction  
 
-In the 21st century, climate change has become recognized as a severe global issue. Climate change is a long-term change in the average weather patterns that have come to define Earth’s local, regional and global climates. These changes have a broad range of observed effects that are synonymous with the term (1). Human activities causing an increase in greenhouse gas emissions, fossil fuel burning in particular, are the driving cause of climate change and global warming. The average increase in global temperature between 1880 and 1981 was ~0.07°C (0.13°F); however, the average rate of increase since1981 (0.18°C / 0.32°F) has more than doubled (2). One method for combatting climate change is to increase the supply and use of renewable energy, particularly solar energy, which allows for the replacing of carbon-intensive energy sources and an overall significant reduction in greenhouse gas emissions. This paper aims to focus on the availability of solar panel implementations and the potential carbon-offsets that coincide with increased solar energy use. 
+In the 21st century, climate change has become recognized as a severe global issue. "Climate change is a long-term change in the average weather patterns that have come to define Earth’s local, regional and global climates. These changes have a broad range of observed effects that are synonymous with the term." Human activities causing an increase in greenhouse gas emissions, fossil fuel burning in particular, are the driving cause of climate change and global warming. "The average increase in global temperature between 1880 and 1981 was ~0.07°C (0.13°F); however, the average rate of increase since1981 (0.18°C / 0.32°F) has more than doubled." One method for combatting climate change is to increase the supply and use of renewable energy, particularly solar energy, which allows for the replacing of carbon-intensive energy sources and an overall significant reduction in greenhouse gas emissions. This paper aims to focus on the availability of solar panel implementations and the potential carbon-offsets that coincide with increased solar energy use. 
 
 
 **The SMART questions we will be focusing on are:**  
@@ -314,9 +314,9 @@ xkabledply(mean_per_direction_table,
 
 
 ```
-From the histograms above, the mean solar energy absorbed in each position is right skewed distributed. Thus, the amount of energy per panel with the most frequency falls behind the overall mean in each position. 
+From the histograms above, the mean solar energy generated in each position is right skewed distributed. Thus, the amount of energy per panel with the most frequency falls behind the overall mean in each position. 
 
-The summary table generate the overall mean of the solar energy absorbed in each position. The south facing (mean of 328 kw/panel) the panel and flat panel (mean of 315 kw/panel) have the most solar energy absorbed (General mean of 310 kw/panel). This result indicates that the south facing panel and flat panel are the two position with the highest capability of solar energy absorption. 
+The summary table shows the overall mean of the solar energy generated in each position. The south facing (mean of 328 kw/panel) panel and flat panel (mean of 315 kw/panel) have the most solar energy generated (General mean of 310 kw/panel). This result indicates that the south facing panel and flat panel are the two position with the highest capability of solar energy generation. 
 
 
 
@@ -364,7 +364,7 @@ solar_panels_region
 
 ```
 
-The number of the solar panel is the potential data points that cities can provide. Overall, south region has the most number of installed solar panels. The second is west region which has the least number of cities counted. The least potential data points provider turns out to be the region with the second most of actual data points provided. 
+The number of the solar panel is the potential data points that cities can provide. Overall, south region has the most number of installed solar panels. The second is west region which has the least number of cities counted. The least potential data points provider turns out to be the region with the second most actual data points provided. 
 
 The flat panel and south-facing panel are the two most-installed panel in all 4 regions of United States. 
 
@@ -575,3 +575,23 @@ direction_anova = anova(total_sun_north, total_sun_south, total_sun_east, total_
 direction_anova
 
 ```
+
+# 5 Conclusion  
+## 5.1 Our Findings  
+From the above tests, we conclude that Model 4 is the best model to use for determining which variables have the greatest effects on Carbon offset. The p-value in Model 4 is < 0.05, and the multiple R-squared value is 95% which means the variables in the Model 4 can explain 95% of changes in the dataset. Cook’s distance is less than 1, which means that there is no high influence of high leverage points that can alter the model. This model shows that panels in the south region create the largest positive carbon emission abatement impact while panels in the northeast and west regions have negative impacts on carbon abatement. Our boxplots show that flat panels generate the most solar power energy across all regions while panels facing north generate the least amount of solar power across all regions. **To summarize our findings, in general, flat panels in the south region of the US will generate the most solar power and have the greatest positive impact on carbon emission abatement.** This makes the most intuitive sense considering the US is in the northern hemisphere and the southern would receive the most direct sunlight, much of which will be directly overhead allowing flat panels to receive more direct sunlight than panels facing a particular direction.  
+
+## 5.2 Caveats  
+
+**1. Our models have high multicollinearity.** While building early models, we found high vif values and had to adjust the models multiple times to obtain desirable outcomes. Some variables were completely linearly dependent, so we had to remove them from our models to receive accurate results.  
+**2. There are high outlier counts in the dataset.** We observed this in the *Total Potential Solar Energy Generated vs Region* boxplot in the EDA section. We had to adjust the y-axis improve readability of the plots. This leads some missing data in our representations.  
+**3. All the values in the dataset are estimated values** obtained from the google database of imagery and maps. They are not real world recorded values obtained from readings of solar panels directly.  
+**4. Since the carbon offset value was calculated by the Google Sunroof Project, we are not sure of the formula used.** Our findings of certain panel types in certain regions having negative effects on carbon emission abatement might not be totally accurate in the long-term. We assume they would have a net-positive impact over their lifespan.  
+
+# 6 Bibliography
+
+Dataset: https://www.kaggle.com/jboysen/google-project-sunroof/data
+
+Nasa. Overview: Weather, Global Warming and Climate Change https://climate.nasa.gov/resources/global-warming-vs-climate-change/
+
+Rebecca Lindsey and LuAnn Dahlman. (2021, March 15). Climate Change: Global Temperature. https://www.climate.gov/news-features/understanding-climate/climate-change-global-temperature
+
