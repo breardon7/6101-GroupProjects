@@ -132,7 +132,9 @@ Included in our discussion is some exploratory data analysis (EDA) focusing on c
 
 
 # 2 EDA 
-Read city and state csv files as a data frame and remove unnecessary columns.  
+
+Our EDA began by reading in the csv file, removing the unnecessary columns, renaming columns for readability purposes, removing observations with missing data, and changing data types as needed. We then explored the data using histograms, box plots, bar plots, scatter plots, and a correlation plot to prepare for model-building. Our exploration results along with explanations can be found below.  
+
 
 ```{r q1}
 citydf <- data.frame(read.csv('city.csv'))
@@ -140,7 +142,7 @@ citydf <- data.frame(read.csv('city.csv'))
 citydf1<-subset(citydf,select = -c(number_of_panels_median, yearly_sunlight_kwh_median, install_size_kw_buckets_json))
 
 ```
-Renaming the long column names to short names.  
+
 ```{r change names in citydf1}
 names(citydf1)[names(citydf1)=="yearly_sunlight_kwh_kw_threshold_avg"]<- "threshold_kw_avg"
 
@@ -163,7 +165,7 @@ names(citydf1)[names(citydf1)=="existing_installs_count"]<- "count_existing"
 
 ```
 
-Changing the datatypes for necessary columns and excluding the missing data.   
+   
 ```{r change datatype}
 citydf1$threshold_kw_avg<-as.numeric(citydf1$threshold_kw_avg)
 citydf1$panels_total<-as.numeric(citydf1$panels_total)
@@ -189,8 +191,11 @@ xkablesummary(city_num, title = "summary of citydf1") # change back to citydf1 i
 
 ```
 
+This chart shows a summary of the variables in the city dataset.  
+
+
 ## 2.2 Histograms  
-**Total number of Cities per Region.**  
+### 2.2.1 Total Number of Cities per Region. 
 ``` {r}  
 
 northeast = c('Maine', 'New Hampshire', 'Vermont', 'Massachusetts', 'Rhode Island', 'Connecticut', 'New York', 'New Jersey', 'Pennsylvania')
@@ -225,7 +230,7 @@ city_count_per_region
 From the bar chart above, it is obvious the south region has the most number of the cities, following by midwest, northeast and west. The number of the cities provides potential data points for the sample space. In other words, cities in the south region can have more potential solar panels installed. However, the potential number of solar panel installed is different from the actual number of solar panels installed. For the following analysis, we will be focuson the acutal solar panels installed in each region. 
 
 
-**Mean energy per panel in different directions.**  
+### 2.2.2 Mean Energy Per Panel in Different Directions.**  
 
 Find sunlight energy potential per panel per direction for each city.  
 i.e. sunlight_north / panels_north = estimated total solar energy generation potential per panel in city x  
@@ -322,6 +327,7 @@ The summary table shows the overall mean of the solar energy generated in each p
 
 
 ## 2.3 Boxplots  
+### 2.3.1 Carbon Offset by Region  
 
 ```{r boxplot}
 region_carbon_offset = ggplot(citydf1, aes(x = region, y = carbon_offset, col = region)) +
@@ -331,6 +337,10 @@ region_carbon_offset
 
 ```
 
+From this box plot we find that the northeast region has lower carbon offset compared with other regions. We can assume that it is because the region has low solar energy potential and prove the assumption in the following steps.
+
+
+### 2.3.2 Sunlight by Region and Roof Types  
 ```{r boxplot for different region and different roof}
 loadPkg("reshape2")
 citydf1_long <- melt(citydf1,measure.vars=21:25)
@@ -342,6 +352,10 @@ region_sun_total = ggplot(citydf1,aes(x=region,y=sunlight_total,fill=region))
 region_sun_total + geom_boxplot() + scale_fill_manual(values = c("red","yellow","blue","green")) + labs(title = "Total Potential Solar Energy Generated Per Panel Direction",x="Region",y="Total Potential Solar Energy Generated") + theme(plot.title = element_text(hjust = 0.5)) + coord_cartesian(ylim = c(0,1e+09))
 #This is the boxplot of total sunlight in different regions. Make the boxes higher(thicker).   
 ```
+
+The first box plot shows the solar energy potential of different types of roofs in different regions. It is easy to find that flat and south-facing roofs have more solar energy potential in any region. 
+
+From the second plot we can know that west and south regions of America have more total sunlight potential while northeast has the least as we assumed before. That means south and west regions are more suitable to build panels, which can be proved by the next plot about the installed panels.  
 
 ## 2.4 Barplots  
 ### 2.4.1 Total Number of Solar Panels (per direction) By Region.  
@@ -463,13 +477,16 @@ corrplot(city_corr, method = "number", type = 'upper')
 
 ```
 
-# 3 Linear Models - Models on Carbon offset  
+Our correlation plot shows the high multicolinearity among many of the variables. We later found this to be an issue when trying to run linear regressions since some of the variables were nearly 100% colinear.  
+
+
+# 3 Linear Models   
 
 Based on the previous EDA and correlation analysis, we picked the carbon offset potential as the dependent variable to build a linear model to determine effects of sunlight_total,panels_total,region and panels in all directions on `Carbon offset`. We are adding the independent variables step by step to find out the best model.
 
 ## 3.1 Model 1  
 
-**Dependent Variables:**
+**Dependent Variables:**  
 1. total solar energy generation potential  
 2. total number of solar panels  
 ``` {r}
@@ -480,13 +497,13 @@ plot(fit1)
 
 ```
 
-The model results show that **model 1** has a high Multiple R-squared of 0.937, meaning 93.7% data can be explained by the model. Total solar energy generation potential has a negative (coef = `r fit1$coefficients[2]`) relationship with carbon offset, and a `r fit1$coefficients[3]`relationship with carbon offset.
+The model results show that **model 1** has a high Multiple R-squared of 0.937, meaning 93.7% data can be explained by the model. Total solar energy generation potential has a negative (coef = `r fit1$coefficients[2]`) relationship with carbon offset, and a `r fit1$coefficients[3]` relationship with carbon offset.
 
 The residual plot looks fine but the cook's distance value is too high.
 
-## 3.2 MOdel 2  
+## 3.2 Model 2  
 
-**Dependent Variables:**
+**Dependent Variables:**  
 1. total solar energy generation potential  
 2. total number of solar panels  
 3. region  
@@ -507,9 +524,9 @@ Looking at the region factor, all regions have a negative effect with carbon off
 The residuals plot of **model 2** looks fine, the cook's distance has slightly improved compared with model 1 but still high.
 
 
-## 3.3 Model 3: 
+## 3.3 Model 3 
 
-**Dependent Variables:**
+**Dependent Variables:**  
 1. total solar energy generation potential  
 2. total number of solar panels  
 3. regions  
@@ -527,9 +544,9 @@ The model 3 adds the variable `total number of flat solar panels` given that the
 The residuals plot of **model 3** looks fine, but the cook's distance value is way too high.
 
 
-## 3.4 MOdel 4  
+## 3.4 Model 4  
 
-**Dependent Variables:**
+**Dependent Variables:**  
 1. total solar energy generation potential  
 2. regions  
 3. all 5 panel directions  
@@ -569,11 +586,11 @@ anova
 
 ```
 
-The ANOVA test shows 
+The ANOVA test shows adding only the flat_panel variable in model 3 proves to be insignificant. Model 4 shows an overall model significance after adding all panel type variables.
 
 # 5 Conclusion  
 ## 5.1 Our Findings  
-From the above tests, we conclude that Model 4 is the best model to use for determining which variables have the greatest effects on Carbon offset. The p-value in Model 4 is < 0.05, and the multiple R-squared value is 95% which means the variables in the Model 4 can explain 95% of changes in the dataset. Cook’s distance is less than 1, which means that there is no high influence of high leverage points that can alter the model. This model shows that panels in the south region create the largest positive carbon emission abatement impact while panels in the northeast and west regions have negative impacts on carbon abatement. Our boxplots show that flat panels generate the most solar power energy across all regions while panels facing north generate the least amount of solar power across all regions. **To summarize our findings, in general, flat panels in the south region of the US will generate the most solar power and have the greatest positive impact on carbon emission abatement.** This makes the most intuitive sense considering the US is in the northern hemisphere and the southern would receive the most direct sunlight, much of which will be directly overhead allowing flat panels to receive more direct sunlight than panels facing a particular direction.  
+From the above tests, we conclude that Model 4 is the best model to use for determining which variables have the greatest effects on Carbon offset. The p-value in Model 4 is < 0.05, and the multiple R-squared value is 95% which means the variables in the Model 4 can explain 95% of changes in the dataset. Cook’s distance is less than 1, which means that there is no high influence of high leverage points that can alter the model. This model shows that panels in the west region create the largest positive carbon emission abatement impact while panels in the northeast region have the lowest impact on carbon abatement. Our boxplots show that flat panels generate the most solar power energy across all regions while panels facing north generate the least amount of solar power across all regions. **To summarize our findings, in general, flat panels in the west region of the US will generate the most solar power and have the greatest positive impact on carbon emission abatement.**
 
 ## 5.2 Caveats  
 
