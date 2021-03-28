@@ -1566,17 +1566,20 @@ plot(fit4)</code></pre>
 <pre class="r"><code>vif(fit1)</code></pre>
 <pre><code>## sunlight_total   panels_total 
 ##           79.4           79.4</code></pre>
+<p>From the vif tests on Model 1 we can observe that all variables have high vif values and is above 10. So the variables are highly correlated and are not acceptable.</p>
 <pre class="r"><code>vif(fit2)</code></pre>
 <pre><code>##                 GVIF Df GVIF^(1/(2*Df))
 ## sunlight_total 82.58  1            9.09
 ## panels_total   82.22  1            9.07
 ## region          1.05  3            1.01</code></pre>
+<p>From the vif tests on Model 2 we can observe that the two variables have high vif values and is above 10. So the variables are highly correlated and are not acceptable. Only one variable <code>region</code>, has low vif value at 1.05 which is in between 1 and 5 required to prove it is moderately correlated and is acceptable.</p>
 <pre class="r"><code>vif(fit3)</code></pre>
 <pre><code>##                  GVIF Df GVIF^(1/(2*Df))
 ## sunlight_total  90.16  1            9.50
 ## panels_total   134.79  1           11.61
 ## region           1.06  3            1.01
 ## panels_flat     21.41  1            4.63</code></pre>
+<p>From the vif tests on Model 3 we can observe that similarly to model2 all the variables except region` have high vif values and is above 10. So, those variables are highly correlated and are not acceptable.</p>
 <pre class="r"><code>vif(fit4)</code></pre>
 <pre><code>##                  GVIF Df GVIF^(1/(2*Df))
 ## sunlight_total 100.37  1           10.02
@@ -1586,6 +1589,11 @@ plot(fit4)</code></pre>
 ## panels_south    78.88  1            8.88
 ## panels_east     44.33  1            6.66
 ## panels_west    118.49  1           10.89</code></pre>
+<ol style="list-style-type: decimal">
+<li>The vif test for Model 4 indicates presence of aliased coefficients in the model which means that the addition of remaining 4 directional panels to the model is resulting in perfect multicollinearity, which is not acceptable at all. Since Model 4 has linearly dependent variables we remove <code>panels_total</code> from the model and we do vif test again.<br />
+</li>
+<li>From the new VIF test on Model 4 we can observe that three of the directional panels have high multicollinearity and is not acceptable, vif value of ‘panels_north’ is less than 10 and near the acceptable vif value but it is still above 5. We can consider it acceptable but it is still highly correlated but not as much as other variables.</li>
+</ol>
 </div>
 </div>
 </div>
