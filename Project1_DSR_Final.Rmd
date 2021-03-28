@@ -567,17 +567,16 @@ The residuals plot of **model 4** looks fine, and the cook's distance value fina
 
 ## 3.5 VIF Tests
 ```{r,results='markup'}
-vif(fit1)
-
-vif(fit2)
-
-vif(fit3)
-
-vif(fit4)
+xkablevif(fit1, title = 'VIF of Model1')
+xkablevif(fit2, title = 'VIF of Model2')
+xkablevif(fit3, title = 'VIF of Model3')
+xkablevif(fit4, title = 'VIF of Model4')
 ```
 
-# 4 Anova Test
+The VIF values are mostly high in all the 4 models which requires further adjustment on feature selection to find the best model.
 
+
+# 4 Anova Test
 
 ``` {r, results='markup'}
 
