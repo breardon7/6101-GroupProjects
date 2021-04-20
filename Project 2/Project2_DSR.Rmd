@@ -1,5 +1,6 @@
 ---
 title: "Kepler Exoplanet Search Project"
+author: "Data Science Rookies"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -121,16 +122,21 @@ length(koi_df)
 
 ```{r remove unwated columns}
 
-koi_df1<-subset(koi_df,select = -c(rowid,kepid,kepoi_name,kepler_name,koi_period_err1
-,koi_period_err2,koi_time0bk_err1,koi_time0bk_err2,koi_impact_err1,koi_impact_err2,koi_duration_err1,koi_duration_err2,koi_depth_err1,koi_depth_err2,koi_prad_err1,koi_prad_err2,koi_teq_err1,koi_teq_err2,koi_insol_err1,koi_insol_err2,koi_steff_err1,koi_steff_err2,koi_slogg_err1,koi_slogg_err2,koi_srad_err1,koi_srad_err2,koi_tce_delivname))
+koi_df1<-data.frame(subset(koi_df,select = -c(rowid,kepid,kepoi_name,kepler_name,koi_period_err1
+,koi_period_err2,koi_time0bk_err1,koi_time0bk_err2,koi_impact_err1,koi_impact_err2,koi_duration_err1,koi_duration_err2,koi_depth_err1,koi_depth_err2,koi_prad_err1,koi_prad_err2,koi_teq_err1,koi_teq_err2,koi_insol_err1,koi_insol_err2,koi_steff_err1,koi_steff_err2,koi_slogg_err1,koi_slogg_err2,koi_srad_err1,koi_srad_err2,koi_tce_delivname)))
 
 length(koi_df1)
 ```
 
+```{R}
+str(koi_df1)
+```
 
+```{R}
+koi_df1 = na.exclude(koi_df1)
+xkablesummary(koi_df1[3:23])
 
-
-
+```
 
 
 
