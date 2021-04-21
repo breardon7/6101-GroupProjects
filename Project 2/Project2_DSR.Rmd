@@ -128,16 +128,15 @@ Included in our discussion is some exploratory data analysis (EDA) and preproces
 # 2 EDA 
 
 Checklist for EDA:
-- Check for normalcy
+- Check for normality
 - Check class balance (count plot of koi-disposition)
 - Correlation heatmap
 
-```{r q1}
+```{r, read files}
 koi_df <- data.frame(read.csv('Kepler_Exoplanet.csv'))
 length(koi_df)
 ```
-
-```{r remove unwanted columns}
+```{r, remove unwanted columns}
 
 koi_df1<-data.frame(subset(koi_df,select = -c(rowid,kepid,kepoi_name,kepler_name,koi_period_err1
 ,koi_period_err2,koi_time0bk_err1,koi_time0bk_err2,koi_impact_err1,koi_impact_err2,koi_duration_err1,koi_duration_err2,koi_depth_err1,koi_depth_err2,koi_prad_err1,koi_prad_err2,koi_teq_err1,koi_teq_err2,koi_insol_err1,koi_insol_err2,koi_steff_err1,koi_steff_err2,koi_slogg_err1,koi_slogg_err2,koi_srad_err1,koi_srad_err2,koi_tce_delivname)))
@@ -145,27 +144,65 @@ koi_df1<-data.frame(subset(koi_df,select = -c(rowid,kepid,kepoi_name,kepler_name
 length(koi_df1)
 ```
 
+
 ```{R}
 str(koi_df1)
 ```
 
-```{R}
+```{R, remove missing values}
 koi_df1 = na.exclude(koi_df1)
-xkablesummary(koi_df1[3:23])
+xkablesummary(koi_df1[c(3, 8:23)], title = "Summary of the numeric")
 
 ```
 
 
+## Count Plot
+
+```{R}
+loadPkg("ggplot2")
+count_koi_disposition = ggplot(data =  koi_df1, aes(x = koi_disposition)) +
+  geom_bar(fill = c("grey"), col = c("blue", "red", "green")) +
+   geom_text(stat = "count", aes(label = ..count..)) + 
+    labs(title = "Count plot of koi_disposition")
+count_koi_disposition   
+
+count_koi_pdisposition = ggplot(data =  koi_df1, aes(x = koi_pdisposition)) +
+  geom_bar(fill = c("grey"), col = c("blue", "red")) +
+   geom_text(stat = "count", aes(label = ..count..)) + 
+    labs(title = "Count plot of koi_pdisposition")
+count_koi_pdisposition
+```
 
 
+```{R, change the data type}
+koi_df1$koi_disposition <- ifelse(koi_df1$koi_disposition == "FALSE POSITIVE", 0,
+                     ifelse(koi_df1$koi_disposition == "CONFIRMED", 1, 2))
+
+koi_df1$koi_pdisposition[koi_df1$koi_pdisposition == "FALSE POSITIVE"] <- 0
+koi_df1$koi_pdisposition[koi_df1$koi_pdisposition == "CANDIDATE"] <- 1
+
+koi_df1$koi_disposition = as.factor(koi_df1$koi_disposition)
+koi_df1$koi_pdisposition = as.factor(koi_df1$koi_pdisposition)
+
+str(koi_df1)
+```
+## Normality Test
+```{R, normality test}
+shapiro.test(koi_df1$koi_period[0:5000])
+qqnorm(koi_df1$koi_period, pch = 1, frame = FALSE, main = "QQ-plot of koi period")
+qqline(koi_df1$koi_period, col = "blue", lwd = 2)
+
+# I am not sure which variables we are gonna use, just doing one for a sample. 
+# koi_period, I don't know what exactly you are. But you suck.
+```
+
+```{R}
+## We can do anova or chi-squared test or feature selection method for testing the impact of the important variables. 
+
+## The correlation is not needed here?
 
 
-
-
-
-
-
-
+```
 
 
 
