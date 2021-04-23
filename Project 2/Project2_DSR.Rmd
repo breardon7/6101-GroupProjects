@@ -234,6 +234,48 @@ logmod_cm
 # confusion matrix
 ```
 
+## K-NN for "koi_disposition"
+
+```{r KNN of disposition}
+loadPkg("FNN")
+
+chooseK = function(k, train_set, val_set, train_class, val_class){
+  
+  # Build knn with k neighbors considered.
+  set.seed(1) # seems no meaning
+  class_knn = knn(train = train_set,    #<- training set cases
+                  test = val_set,       #<- test set cases
+                  cl = train_class,     #<- category for classification
+                  k = k) #,                #<- number of neighbors considered
+                  # use.all = TRUE)       #<- control ties between class assignments
+                                        #   If true, all distances equal to the kth 
+                                        #   largest are included
+  
+  tab = table(class_knn, val_class)
+  
+  # Calculate the accuracy.
+  accu = sum(tab[row(tab) == col(tab)]) / sum(tab)                         
+  cbind(k = k, accuracy = accu)
+}
+
+knn_different_k <- sapply(seq(1, 21, by = 2),
+                          function(x) chooseK(x, 
+                                             train_set = koi_trainX,
+                                             val_set = koi_testX,
+                                             train_class = koi_trainLabels_dis,
+                                             val_class = koi_testLabels_dis))
+
+knn_different_k = data.frame(k = knn_different_k[1,],
+                             accuracy = knn_different_k[2,])
+knn_different_k
+# K= 17 has the best accuracy 0.638, still worse than multi-logistic 
+
+knn_pred <- knn(train = koi_trainX,test=koi_testX,cl = koi_trainLabels_dis,k = 17)
+knn_cm <- confusionMatrix(knn_pred,koi_testLabels_dis)
+knn_cm     # confusion matrix for 17-NN
+
+```
+
 
 
 
