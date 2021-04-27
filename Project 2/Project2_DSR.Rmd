@@ -215,6 +215,33 @@ qqline(koi_df1$koi_period, col = "blue", lwd = 2)
 
 
 ```
+
+# Feature Selection
+```{r feature selection}
+loadPkg('leaps')
+dim(koi_df1)
+reg.best10 <- regsubsets(koi_disposition~. , data = koi_df1, nvmax = 10, nbest = 2, method = 'exhaustive')
+plot(reg.best10, scale = 'adjr2', main = 'Adjusted R^2')  
+plot(reg.best10, scale = 'bic', main = 'BIC')  
+plot(reg.best10, scale = 'Cp', main = 'CP')  
+summary(reg.best10)
+
+```
+
+The regsubsets method with the `adjusted R2`, 'BIC`, and `Cp` criteria all return with the same result showing that the best model has the following 10 features: koi_pdisposition1,koi_score, koi_period, koi_model_snr, koi_tce_plnt_num, koi_steff, koi_slogg, ra, dec, and koi_kepmag, with a best **Adjusted R-squared of 0.81**.
+
+```{r feature selection - plot, fig.width=10,fig.height=8}
+loadPkg('car')
+
+subsets(reg.best10, statistic = 'adjr2', legend = FALSE, min.size = 5, main = 'Adjusted R^2')
+subsets(reg.best10, statistic = 'cp', legend = FALSE, min.size = 5, main = 'Mallow Cp')
+abline(a=1,b=1,lty=3)
+```
+
+
+The `subsets` function can plot and show better which features have how much influence on the target variable and by how much.
+
+
 # 3 Modeling  
 
 ## Train-Test split
@@ -301,6 +328,7 @@ confusionMatrix(p, koi_test_dis_orig$koi_disposition)
 
 # the accuracy seems to be 0.896 on the original data set
 ```
+
 
 
 ## Multi-Logistic for "koi_disposition"
