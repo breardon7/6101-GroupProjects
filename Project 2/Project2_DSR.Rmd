@@ -385,7 +385,31 @@ knn_cm <- confusionMatrix(knn_pred,koi_testLabels_dis)
 knn_cm     # confusion matrix for 17-NN
 
 ```
+## ROC-AUC Plot
 
+**ROC-AUC Plot of Multi-logistic regression**
+
+```{R}
+loadPkg("pROC")
+pred<- predict(logmod_koi, koi_test_dis, type='probs')
+a <- roc(koi_disposition~pred[,1], data=koi_test_dis)
+auc(a) 
+plot(a) # it doesn't look so right.
+
+```
+
+
+
+**ROC-AUC plot of KNN**
+```{R}
+
+prob=knn(train = koi_trainX,test=koi_testX,cl = koi_trainLabels_dis,k = 17, prob=T)
+prob=attr(prob, "prob")
+b <- roc(koi_testLabels_dis, prob)
+auc(b) 
+plot(b)
+
+```
 
 
 
