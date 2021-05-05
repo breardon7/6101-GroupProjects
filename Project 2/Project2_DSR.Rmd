@@ -140,7 +140,7 @@ Read the dataset and store it as koi_df_orig.
 koi_df_orig <- data.frame(read.csv('Kepler_Exoplanet.csv'))
 length(koi_df_orig)
 ```
-Removing unwanted columns from the dataframe.  
+
 
 ```{r, remove unwanted columns}
 koi_df<-data.frame(subset(koi_df_orig,select = -c(rowid,kepid,kepoi_name,kepler_name, koi_teq_err1,koi_teq_err2,koi_tce_delivname)))
@@ -153,7 +153,7 @@ length(koi_df1)
 ```{R}
 str(koi_df1)
 ```
-Summary of the numeric columns.  
+Below is a summary of the numeric columns.  
 
 ```{R, remove missing values, results="markup"}
 koi_df1 = na.exclude(koi_df1)
@@ -162,8 +162,9 @@ xkablesummary(koi_df1[c(3, 8:23)], title = "Summary of the numeric")
 ```
 
 
-## 2.1 Count Plot  
+## 2.1 Count Plots  
 
+### 2.1.1 Count Plot of Target Featur - koi_disposition  
 ```{R, results = 'markup'}
 loadPkg("ggplot2")
 count_koi_disposition = ggplot(data =  koi_df1, aes(x = koi_disposition)) +
@@ -181,7 +182,7 @@ count_koi_pdisposition
 
 To test the normality of our target variable, we use a count plot. We found that there are roughly double the amount of observations classified as false positives than candidate or confirmed. With an unbalanced dataset like this, we run the risk of our models being better at classifying false positives than confirmed or candidate, which could result in our models performing poorly.  
 
-
+### 2.1.2 Count Plot of koi_pdisposition   
 ```{R, change the data type}
 # Adjusted Dataset
 koi_df1$koi_disposition <- ifelse(koi_df1$koi_disposition == "FALSE POSITIVE", 0,
@@ -211,39 +212,46 @@ koi_df$koi_pdisposition = as.factor(koi_df$koi_pdisposition)
 We use "0", "1" and "2" instead of the "FALSE POSITIVE", "CONFIRMED" and "CANDIDATE" to make it more convenient.
 
 ## 2.2 Normality Test  
+
+### 2.2.1 QQ Test for koi_period  
 ```{R, normality test1}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_period, pch = 1, frame = FALSE, main = "QQ-plot of koi period")
 qqline(koi_df1$koi_period, col = "blue", lwd = 2)
 
-```
+```  
+
 From the above plot we can observe that koi_period does not have normal distribution.  
 
+### 2.2.2 QQ Test for koi_steff  
 ```{R, normality test2}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_steff, pch = 1, frame = FALSE, main = "QQ-plot of koi steff")
 qqline(koi_df1$koi_steff, col = "blue", lwd = 2)
 
-```
+```  
+
 From the above plot we can observe that koi_steff does not have normal distribution.  
 
 
-
+### 2.2.3 QQ Test for koi_slogg  
 ```{R, normality test3}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_slogg, pch = 1, frame = FALSE, main = "QQ-plot of koi slogg")
 qqline(koi_df1$koi_slogg, col = "blue", lwd = 2)
 
-```
+```  
+
 From the above plot we can observe that koi_slogg does not have normal distribution.  
 
-
+### 2.2.4 QQ Test for koi_kepmag  
 ```{R, normality test4}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_kepmag, pch = 1, frame = FALSE, main = "QQ-plot of koi kepmag")
 qqline(koi_df1$koi_kepmag, col = "blue", lwd = 2)
 
-```
+```  
+
 From the above plot we can observe that koi_kepmag is near to normal distribution but not completely.  
 
 ## 2.3 Correlation  
