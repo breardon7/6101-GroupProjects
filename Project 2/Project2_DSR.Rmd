@@ -274,7 +274,7 @@ loadPkg('car')
 
 subsets(reg.best10, statistic = 'adjr2', legend = FALSE, min.size = 5, main = 'Adjusted R^2')
 subsets(reg.best10, statistic = 'cp', legend = FALSE, min.size = 5, main = 'Mallow Cp')
-abline(a=1,b=1,lty=3)
+abline(a=5,b=5,lty=3)
 ```
 
 
