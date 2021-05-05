@@ -328,7 +328,7 @@ mean(logit_mod_predicted.classes==koi_test_dis_orig$koi_disposition)
 
 ## 4.1 Random Forest 
 
-```{R}
+```{R,results='markup'}
 set.seed(1000)
 koi_train_dis_orig = na.exclude(koi_train_dis_orig)
 koi_test_dis_orig = na.exclude(koi_test_dis_orig)
@@ -354,6 +354,9 @@ logmod_koi <- multinom(koi_disposition~.,data = koi_train_dis,model = T)
 logmod_sum <- summary(logmod_koi)
 logmod_pred <- predict(logmod_koi,koi_test_dis)
 mean(logmod_pred==koi_testLabels_dis)
+```
+
+```{r,results='markup'}
 # The prediction accuracy of the model is 0.833
 logmod_cm <- confusionMatrix(logmod_pred,koi_testLabels_dis)
 logmod_cm
@@ -369,7 +372,7 @@ The result of the confusion matrix shows that the accuracy of the model is 0.833
 
 ## 4.3 K-NN for "koi_disposition"  
 
-```{r KNN of disposition}
+```{r KNN of disposition,results='markup'}
 loadPkg("FNN")
 
 chooseK = function(k, train_set, val_set, train_class, val_class){
