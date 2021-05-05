@@ -117,8 +117,6 @@ xkablevif = function(model, title="VIFs of the model", digits = 3, pos="left", b
 
 # 1 Introduction  
 
-## 
-
 Have you ever wondered what life on other planets might be like? If so, you are not alone. Humans have been looking to the sky and beyond for centuries wondering what might be found in the vast landscape of the universe. As technology advances, we continue developing tools that allow us to better identify objects of interest beyond the scope of our galaxy, one of those tools being the Kepler Space Telescope (KST). The KST is a space telescope that was launched into Earth’s orbit on March 7, 2009 to monitor more than 150,000 stars in search for transiting exoplanets. All objects the KST shows interest in are labeled as Kepler Objects of Interest (KOI), and the KOI feature data is logged and stored by NASA. This data is available to the public and is what we will be analyzing.This paper aims to explore the idea of using classification techniques, specifically logistic regression, k-nearest neighbor, and random forests to accurately distinguish between exoplanet and non-exoplanet KOIs.
 
 **The SMART questions we will be focusing on are:**  
@@ -163,7 +161,7 @@ xkablesummary(koi_df1[c(3, 8:23)], title = "Summary of the numeric")
 
 ## 2.1 Count Plots  
 
-### 2.1.1 Count Plot of Target Featur - koi_disposition  
+### 2.1.1 Count Plot of Target Feature - koi_disposition  
 ```{R, results = 'markup'}
 loadPkg("ggplot2")
 count_koi_disposition = ggplot(data =  koi_df1, aes(x = koi_disposition)) +
@@ -181,7 +179,6 @@ count_koi_pdisposition
 
 To test the normality of our target variable, we use a count plot. We found that there are roughly double the amount of observations classified as false positives than candidate or confirmed. With an unbalanced dataset like this, we run the risk of our models being better at classifying false positives than confirmed or candidate, which could result in our models performing poorly.  
 
-### 2.1.2 Count Plot of koi_pdisposition   
 ```{R, change the data type}
 # Adjusted Dataset
 koi_df1$koi_disposition <- ifelse(koi_df1$koi_disposition == "FALSE POSITIVE", 0,
@@ -208,7 +205,7 @@ koi_df$koi_pdisposition = as.factor(koi_df$koi_pdisposition)
 
 ```  
 
-We use "0", "1" and "2" instead of the "FALSE POSITIVE", "CONFIRMED" and "CANDIDATE" to make it more convenient.
+For the target variable, we use "0", "1" and "2" instead of the "FALSE POSITIVE", "CONFIRMED" and "CANDIDATE" to make it more convenient.  
 
 ## 2.2 Normality Test  
 
@@ -253,14 +250,9 @@ qqline(koi_df1$koi_kepmag, col = "blue", lwd = 2)
 
 From the above plot we can observe that koi_kepmag is near to normal distribution but not completely.  
 
-## 2.3 Correlation  
-```{r,correlation plot}
-
-```
-
 # 3 Preprocessing  
 
-# 3.1 Feature Selection  
+## 3.1 Feature Selection  
 
 ```{r feature selection}
 loadPkg('leaps')
@@ -438,8 +430,6 @@ plot(a)
 ```
 
 Area under the curve is = 0.995 which is highly acceptable since it is greater than 0.8.  
-
-
 
 ### 4.4.1 ROC-AUC Plot of KNN  
 
