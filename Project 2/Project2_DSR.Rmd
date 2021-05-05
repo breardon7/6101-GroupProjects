@@ -340,7 +340,12 @@ confusionMatrix(p, koi_test_dis_orig$koi_disposition)
 # the accuracy seems to be 0.896 on the original data set
 ```
 
-
+From the results of random forest regression, we can observe that the accuracy of the model = 89.6 %.  
+From the confusion matrix, we can observe that 0's are predicted more correctly than the other two. There are more number of false positives and false negatives between the 'Confirmed' and 'Candidate' results in the confusion matrix.  
+The precision for 'false positive' = 98.03 %.  
+The precision for 'confirmed' = 83.54 %.  
+The precision for 'candidate' = 74.83 %.   
+We can also observe that the p-valve is less than 5%. Also, OOB estimate of error rate: 11.3%.  
 
 ## 4.2 Multi-Logistic for "koi_disposition"  
 
