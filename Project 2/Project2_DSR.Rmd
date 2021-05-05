@@ -134,7 +134,6 @@ Our dataset,created by NASA and the Kepler Space Program, consisted of 9,565 obs
 
 # 2 EDA & Preprocessing  
 
-Read the dataset and store it as koi_df_orig.  
 
 ```{r, read files}
 koi_df_orig <- data.frame(read.csv('Kepler_Exoplanet.csv'))
