@@ -246,6 +246,10 @@ qqline(koi_df1$koi_kepmag, col = "blue", lwd = 2)
 ```
 From the above plot we can observe that koi_kepmag is near to normal distribution but not completely.  
 
+## 2.3 Correlation  
+```{r,correlation plot}
+
+```
 
 # 3 Preprocessing  
 
