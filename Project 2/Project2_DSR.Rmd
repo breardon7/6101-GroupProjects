@@ -203,7 +203,7 @@ koi_df$koi_pdisposition = as.factor(koi_df$koi_pdisposition)
 
 ```  
 
-Since a random forest requires a binary target, we decided to adjust our target feature to only contain two options - 1 for confirmed and 0 for false positive or candidate since a candidate is not a confirmed exoplanet.
+We use "0", "1" and "2" instead of the "FALSE POSITIVE", "CONFIRMED" and "CANDIDATE" to make it more convenient.
 
 ## 2.2 Normality Test  
 ```{R, normality test}
@@ -282,7 +282,7 @@ koi_testLabels_pdis_orig <- koi_df[koi_sample==2, 2]  # Only Y= koi_pdisposition
 
 ```
 
-
+Now we finish the train-test split for the origin data with all features and the simplified data with less features.
 
 ```{r}
 loadPkg("MASS")
@@ -354,6 +354,13 @@ logmod_cm <- confusionMatrix(logmod_pred,koi_testLabels_dis)
 logmod_cm
 # confusion matrix
 ```
+Now we try to use the multinomial logistic regression to build the model. We have learnt the logistic regression for the 2-class problems like the survivals of the Titanic dataset. But in this project, our target feature has 3 classes:0,1,2. So the formula is a little bit different.
+
+For the 2-class regressions, the response is log(P/(1-p))
+For the 3-class regession, firstly we choose a response class as a reference or "base" like class "0" in this project. 
+Then we use log(P1/P0), log(P2/P0) as responses and do the regressions respectively. The other things are almost the same. 
+
+The result of the confusion matrix shows that the accuracy of the model is 0.833.
 
 ## 4.3 K-NN for "koi_disposition"  
 
@@ -396,6 +403,8 @@ knn_cm <- confusionMatrix(knn_pred,koi_testLabels_dis)
 knn_cm     # confusion matrix for 17-NN
 
 ```  
+According to the result of the K-NN method, when k = 17, the accuracy 0.638 is the best, which is not so satisfactory.
+The chooseK() function is from the rmd file of the professor.
 
 ## 4.4 ROC-AUC Plot
 
