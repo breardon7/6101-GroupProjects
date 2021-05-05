@@ -1,5 +1,5 @@
 ---
-title: "Kepler Exoplanet Search Project"
+title: "Kepler Exoplanet Classification"
 author: "Data Science Rookies"
 date: "`r Sys.Date()`"
 output:
@@ -117,20 +117,22 @@ xkablevif = function(model, title="VIFs of the model", digits = 3, pos="left", b
 
 # 1 Introduction  
 
-Have you ever wondered what life on other planets might be like? If so, you are not alone. Humans have been looking to the sky and beyond for centuries wondering what might be found in the vast landscape of the universe. As technology advances, we continue developing tools that allow us to better identify objects of interest beyond the scope of our galaxy, one of those tools being the Kepler Space Telescope (KST). The KST is a space telescope that was launched into Earth’s orbit on March 7, 2009 to monitor more than 150,000 stars in search for transiting exoplanets. All objects the KST shows interest in are labeled as Kepler Objects of Interest (KOI), and the KOI feature data is logged and stored by NASA. This data is available to the public and is what we will be analyzing.This paper aims to explore the idea of using classification techniques, specifically logistic regression and k-nearest neighbor, to accurately distinguish between exoplanet and non-exoplanet KOIs.
+## 
+
+Have you ever wondered what life on other planets might be like? If so, you are not alone. Humans have been looking to the sky and beyond for centuries wondering what might be found in the vast landscape of the universe. As technology advances, we continue developing tools that allow us to better identify objects of interest beyond the scope of our galaxy, one of those tools being the Kepler Space Telescope (KST). The KST is a space telescope that was launched into Earth’s orbit on March 7, 2009 to monitor more than 150,000 stars in search for transiting exoplanets. All objects the KST shows interest in are labeled as Kepler Objects of Interest (KOI), and the KOI feature data is logged and stored by NASA. This data is available to the public and is what we will be analyzing.This paper aims to explore the idea of using classification techniques, specifically logistic regression, k-nearest neighbor, and random forests to accurately distinguish between exoplanet and non-exoplanet KOIs.
 
 **The SMART questions we will be focusing on are:**  
 1. For the 9,564 KOIs in the database, can we use classification methods to accurately classify KOIs as exoplanets based on the given feature data?  
 2. Which will be more accurate for classifying KOIs, a logistic regression or k-nearest neighbor model?
 
-Included in our discussion is some exploratory data analysis (EDA) and preprocessing of the dataset to prepare the data to run through our models.
+Included in our discussion is some exploratory data analysis (EDA) and preprocessing of the dataset to prepare it train our models.
 
-# 2 EDA 
+## 1.2 Dataset Overview
 
-Checklist for EDA:
-- Check for normality
-- Check class balance (count plot of koi-disposition)
-- Correlation heatmap
+Our dataset,created by NASA and the Kepler Space Program, consisted of 9,565 observations - each observation is a distinct Kepler Object of Interest (KOI). Initially, there were 50 Features describing the KOIs with a combination of numerical and categorical data. We reduced the number of features from 50 to 23 after dropping unnecessary features that were of no use to our project or contained a large number of null values. The target variable we chose was koi_disposition. This target classifies indicates whether a kepler object of interest is an exoplanet (denoted by "confirmed"), a possible exoplanet (denoted by "confirmed"), or not an exoplanet (denoted by "false positive").
+
+
+# 2 EDA & Preprocessing
 
 ```{r, read files}
 koi_df_orig <- data.frame(read.csv('Kepler_Exoplanet.csv'))
@@ -155,9 +157,9 @@ xkablesummary(koi_df1[c(3, 8:23)], title = "Summary of the numeric")
 ```
 
 
-## Count Plot
+## 2.1 Count Plot  
 
-```{R}
+```{R, results = 'markup'}
 loadPkg("ggplot2")
 count_koi_disposition = ggplot(data =  koi_df1, aes(x = koi_disposition)) +
   geom_bar(fill = c("grey"), col = c("blue", "red", "green")) +
@@ -170,7 +172,9 @@ count_koi_pdisposition = ggplot(data =  koi_df1, aes(x = koi_pdisposition)) +
    geom_text(stat = "count", aes(label = ..count..)) + 
     labs(title = "Count plot of koi_pdisposition")
 count_koi_pdisposition
-```
+```  
+
+To test the normality of our target variable, we use a count plot. We found that there are roughly double the amount of observations classified as false positives than candidate or confirmed. With an unbalanced dataset like this, we run the risk of our models being better at classifying false positives than confirmed or candidate, which could result in our models performing poorly.  
 
 
 ```{R, change the data type}
@@ -197,8 +201,11 @@ koi_df$koi_pdisposition[koi_df$koi_pdisposition == "CANDIDATE"] <- 1
 koi_df$koi_disposition = as.factor(koi_df$koi_disposition)
 koi_df$koi_pdisposition = as.factor(koi_df$koi_pdisposition)
 
-```
-## Normality Test
+```  
+
+Since a random forest requires a binary target, we decided to adjust our target feature to only contain two options - 1 for confirmed and 0 for false positive or candidate since a candidate is not a confirmed exoplanet.
+
+## 2.2 Normality Test  
 ```{R, normality test}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_period, pch = 1, frame = FALSE, main = "QQ-plot of koi period")
@@ -214,9 +221,12 @@ qqline(koi_df1$koi_period, col = "blue", lwd = 2)
 ## The correlation is not needed here?
 
 
-```
+```  
 
-# Feature Selection
+# 3 Preprocessing  
+
+# 3.1 Feature Selection  
+
 ```{r feature selection}
 loadPkg('leaps')
 dim(koi_df1)
@@ -241,10 +251,7 @@ abline(a=1,b=1,lty=3)
 
 The `subsets` function can plot and show better which features have how much influence on the target variable and by how much.
 
-
-# 3 Modeling  
-
-## Train-Test split
+## 3.2 Train-Test split  
 
 ```{r Train-Test Split }
 set.seed(1000)
@@ -275,7 +282,6 @@ koi_testLabels_pdis_orig <- koi_df[koi_sample==2, 2]  # Only Y= koi_pdisposition
 
 ```
 
-## Stepwise Feature Selection - I think this was a bad idea
 
 
 ```{r}
@@ -291,6 +297,8 @@ loadPkg("Boruta")
 loadPkg("mlbench")
 ```
 
+#       Do we delete this?
+## Stepwise Feature Selection - I think this was a bad idea
 
 ```{r step-wise feature selections, eval=FALSE}
 # Fit Model
@@ -303,8 +311,9 @@ logit_mod_predicted.classes = ifelse(logit_mod_step_prob = 1, "CANDIDATE", "FALS
 # Model Acccuracy
 mean(logit_mod_predicted.classes==koi_test_dis_orig$koi_disposition)
 ```
+''''
+## 3.3 Variable Importance Test  
 
-## Variable Importance test
 ```{r, fig.width = 14, fig.length=12}
 # set.seed(1000)
 # boruta.model = Boruta(koi_disposition~., data=koi_df[-2], doTrace = 2, maxRuns = 50)
@@ -315,8 +324,10 @@ mean(logit_mod_predicted.classes==koi_test_dis_orig$koi_disposition)
 ## This takes too long. But it seems all the variables from the original dataset are important                      
 ```
 
+# 4 Modeling  
 
-## Random Forest 
+## 4.1 Random Forest 
+
 ```{R}
 set.seed(1000)
 koi_train_dis_orig = na.exclude(koi_train_dis_orig)
@@ -331,7 +342,7 @@ confusionMatrix(p, koi_test_dis_orig$koi_disposition)
 
 
 
-## Multi-Logistic for "koi_disposition"
+## 4.2 Multi-Logistic for "koi_disposition"  
 
 ```{r Multi-Logistic of disposition}
 logmod_koi <- multinom(koi_disposition~.,data = koi_train_dis,model = T)
@@ -344,7 +355,7 @@ logmod_cm
 # confusion matrix
 ```
 
-## K-NN for "koi_disposition"
+## 4.3 K-NN for "koi_disposition"  
 
 ```{r KNN of disposition}
 loadPkg("FNN")
@@ -384,10 +395,11 @@ knn_pred <- knn(train = koi_trainX,test=koi_testX,cl = koi_trainLabels_dis,k = 1
 knn_cm <- confusionMatrix(knn_pred,koi_testLabels_dis)
 knn_cm     # confusion matrix for 17-NN
 
-```
-## ROC-AUC Plot
+```  
 
-**ROC-AUC Plot of Multi-logistic regression**
+## 4.4 ROC-AUC Plot
+
+### 4.4.1 ROC-AUC Plot of Multi-Logistic   
 
 ```{R}
 loadPkg("pROC")
@@ -400,7 +412,9 @@ plot(a) # it doesn't look so right.
 
 
 
-**ROC-AUC plot of KNN**
+### 4.4.1 ROC-AUC Plot of KNN  
+
+
 ```{R}
 
 prob=knn(train = koi_trainX,test=koi_testX,cl = koi_trainLabels_dis,k = 17, prob=T)
@@ -411,5 +425,23 @@ plot(b)
 
 ```
 
+# 5 Conclusion  
+
+## 5.1 Results  
+
+We found that the random forest performed the best out of our three models. We believe this is due to its ability to add additional randomness to the model through the high number of estimators and can find the best features in the dataset. The Logistic Regression model was the fastest model to train and also had a relatively high accuracy score. The reason we believe it did not perform as well as the random forest model is because logistic regression models can often be highly influenced by multicollinearty and memorize the the training data, causing poor predictions on the test data. And lastly, our KNN model performed the worst to the high dimensionality of our dataset.
+
+## 5.2 Caveats  
+
+The caveats we dealt with during this project were our high feature count and our numerical features mostly not having normal distributions. Because of the high feature count, we were not able to use stepwise feature selection, we could not read the output of the pairs-plot, and our KNN model ultimately performed poorly.
+
+## 5.3 Citations
+
+Dataset - https://www.kaggle.com/nasa/kepler-exoplanet-search-results
+
+* https://www.nasa.gov/mission_pages/kepler/overview/index.html  
+* https://www.kaggle.com/nasa/kepler-exoplanet-search-results  
+* https://www.nasa.gov/ames/kepler/nasas-kepler-discovers-first-earth-size-planet-in-the-habitable-zone-of-another-star  
+* https://www.nasa.gov/vision/universe/newworlds/Osiris_leaks.html
 
 
