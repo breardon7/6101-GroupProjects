@@ -443,7 +443,9 @@ plot(b)
 
 ## 5.1 Results  
 
-We found that the random forest performed the best out of our three models. We believe this is due to its ability to add additional randomness to the model through the high number of estimators and can find the best features in the dataset. The Logistic Regression model was the fastest model to train and also had a relatively high accuracy score. The reason we believe it did not perform as well as the random forest model is because logistic regression models can often be highly influenced by multicollinearty and memorize the the training data, causing poor predictions on the test data. And lastly, our KNN model performed the worst to the high dimensionality of our dataset.
+We found that the random forest performed the best out of our three models. We believe this is due to its ability to add additional randomness to the model through the high number of estimators and can find the best features in the dataset. The Logistic Regression model was the fastest model to train and also had a relatively high accuracy score. The reason we believe it did not perform as well as the random forest model is because logistic regression models can often be highly influenced by multicollinearty and memorize the the training data, causing poor predictions on the test data. And lastly, our KNN model performed the worst to the high dimensionality of our dataset.  
+
+So, we conclude that using random forest model to predict the `koi_disposition` is better option than other models.  
 
 ## 5.2 Caveats  
 
