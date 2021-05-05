@@ -132,12 +132,16 @@ Included in our discussion is some exploratory data analysis (EDA) and preproces
 Our dataset,created by NASA and the Kepler Space Program, consisted of 9,565 observations - each observation is a distinct Kepler Object of Interest (KOI). Initially, there were 50 Features describing the KOIs with a combination of numerical and categorical data. We reduced the number of features from 50 to 23 after dropping unnecessary features that were of no use to our project or contained a large number of null values. The target variable we chose was koi_disposition. This target classifies indicates whether a kepler object of interest is an exoplanet (denoted by "confirmed"), a possible exoplanet (denoted by "confirmed"), or not an exoplanet (denoted by "false positive").
 
 
-# 2 EDA & Preprocessing
+# 2 EDA & Preprocessing  
+
+Read the dataset and store it as koi_df_orig.  
 
 ```{r, read files}
 koi_df_orig <- data.frame(read.csv('Kepler_Exoplanet.csv'))
 length(koi_df_orig)
 ```
+Removing unwanted columns from the dataframe.  
+
 ```{r, remove unwanted columns}
 koi_df<-data.frame(subset(koi_df_orig,select = -c(rowid,kepid,kepoi_name,kepler_name, koi_teq_err1,koi_teq_err2,koi_tce_delivname)))
 koi_df1<-data.frame(subset(koi_df,select =   -c(koi_period_err1,koi_period_err2,koi_time0bk_err1,koi_time0bk_err2,koi_impact_err1,koi_impact_err2,koi_duration_err1,koi_duration_err2,koi_depth_err1,koi_depth_err2,koi_prad_err1,koi_prad_err2,koi_insol_err1,koi_insol_err2,koi_steff_err1,koi_steff_err2,koi_slogg_err1,koi_slogg_err2,koi_srad_err1,koi_srad_err2)))
@@ -149,11 +153,12 @@ length(koi_df1)
 ```{R}
 str(koi_df1)
 ```
+Summary of the numeric columns.  
 
-```{R, remove missing values}
+```{R, remove missing values, results="markup"}
 koi_df1 = na.exclude(koi_df1)
 xkablesummary(koi_df1[c(3, 8:23)], title = "Summary of the numeric")
-
+#xkablesummary
 ```
 
 
@@ -206,22 +211,41 @@ koi_df$koi_pdisposition = as.factor(koi_df$koi_pdisposition)
 We use "0", "1" and "2" instead of the "FALSE POSITIVE", "CONFIRMED" and "CANDIDATE" to make it more convenient.
 
 ## 2.2 Normality Test  
-```{R, normality test}
+```{R, normality test1}
 shapiro.test(koi_df1$koi_period[0:5000])
 qqnorm(koi_df1$koi_period, pch = 1, frame = FALSE, main = "QQ-plot of koi period")
 qqline(koi_df1$koi_period, col = "blue", lwd = 2)
 
-# I am not sure which variables we are gonna use, just doing one for a sample. 
-# koi_period, I don't know what exactly you are. But you suck.
 ```
+From the above plot we can observe that koi_period does not have normal distribution.  
 
-```{R}
-## We can do anova or chi-squared test or feature selection method for testing the impact of the important variables. 
+```{R, normality test2}
+shapiro.test(koi_df1$koi_period[0:5000])
+qqnorm(koi_df1$koi_steff, pch = 1, frame = FALSE, main = "QQ-plot of koi steff")
+qqline(koi_df1$koi_steff, col = "blue", lwd = 2)
 
-## The correlation is not needed here?
+```
+From the above plot we can observe that koi_steff does not have normal distribution.  
 
 
-```  
+
+```{R, normality test3}
+shapiro.test(koi_df1$koi_period[0:5000])
+qqnorm(koi_df1$koi_slogg, pch = 1, frame = FALSE, main = "QQ-plot of koi slogg")
+qqline(koi_df1$koi_slogg, col = "blue", lwd = 2)
+
+```
+From the above plot we can observe that koi_slogg does not have normal distribution.  
+
+
+```{R, normality test4}
+shapiro.test(koi_df1$koi_period[0:5000])
+qqnorm(koi_df1$koi_kepmag, pch = 1, frame = FALSE, main = "QQ-plot of koi kepmag")
+qqline(koi_df1$koi_kepmag, col = "blue", lwd = 2)
+
+```
+From the above plot we can observe that koi_kepmag is near to normal distribution but not completely.  
+
 
 # 3 Preprocessing  
 
@@ -238,7 +262,8 @@ summary(reg.best10)
 
 ```
 
-The regsubsets method with the `adjusted R2`, 'BIC`, and `Cp` criteria all return with the same result showing that the best model has the following 10 features: koi_pdisposition1,koi_score, koi_period, koi_model_snr, koi_tce_plnt_num, koi_steff, koi_slogg, ra, dec, and koi_kepmag, with a best **Adjusted R-squared of 0.81**.
+The regsubsets method with the `adjusted R2`, 'BIC`, and `Cp` criteria all return with the same result showing that the best model has the following 10 features: koi_pdisposition1,koi_score, koi_period, koi_model_snr, koi_tce_plnt_num, koi_steff, koi_slogg, ra, dec, and koi_kepmag, with a best **Adjusted R-squared of 0.81**.  
+
 
 ```{r feature selection - plot, fig.width=10,fig.height=8}
 loadPkg('car')
@@ -249,7 +274,7 @@ abline(a=1,b=1,lty=3)
 ```
 
 
-The `subsets` function can plot and show better which features have how much influence on the target variable and by how much.
+The `subsets` function can plot and show better which features have how much influence on the target variable and by how much.  
 
 ## 3.2 Train-Test split  
 
@@ -282,7 +307,7 @@ koi_testLabels_pdis_orig <- koi_df[koi_sample==2, 2]  # Only Y= koi_pdisposition
 
 ```
 
-Now we finish the train-test split for the origin data with all features and the simplified data with less features.
+Now we finished the train-test split for the origin data with all features and the simplified data with less features.  
 
 ```{r}
 loadPkg("MASS")
@@ -295,33 +320,6 @@ loadPkg("rpart")
 loadPkg("randomForest")
 loadPkg("Boruta")
 loadPkg("mlbench")
-```
-
-#       Do we delete this?
-## Stepwise Feature Selection - I think this was a bad idea
-
-```{r step-wise feature selections, eval=FALSE}
-# Fit Model
-logit_mod_step = multinom(koi_disposition~., data = koi_train_dis_orig, model = T) %>%
-  stepAIC(trace = FALSE)
-# summary(logit_mod_step)
-# Predictions
-logit_mod_step_prob = logit_mod_step %>% predict(koi_test_dis_orig, type = 'response')
-logit_mod_predicted.classes = ifelse(logit_mod_step_prob = 1, "CANDIDATE", "FALSE POSITIVE")
-# Model Acccuracy
-mean(logit_mod_predicted.classes==koi_test_dis_orig$koi_disposition)
-```
-''''
-## 3.3 Variable Importance Test  
-
-```{r, fig.width = 14, fig.length=12}
-# set.seed(1000)
-# boruta.model = Boruta(koi_disposition~., data=koi_df[-2], doTrace = 2, maxRuns = 50)
-# boruta.model
-# plot(boruta.model, las = 2 , cex.axis = 0.7)
-
-
-## This takes too long. But it seems all the variables from the original dataset are important                      
 ```
 
 # 4 Modeling  
@@ -362,13 +360,13 @@ logmod_cm <- confusionMatrix(logmod_pred,koi_testLabels_dis)
 logmod_cm
 # confusion matrix
 ```
-Now we try to use the multinomial logistic regression to build the model. We have learnt the logistic regression for the 2-class problems like the survivals of the Titanic dataset. But in this project, our target feature has 3 classes:0,1,2. So the formula is a little bit different.
+Now we try to use the multinomial logistic regression to build the model. We have learnt the logistic regression for the 2-class problems like the survivals of the Titanic dataset. But in this project, our target feature has 3 classes:0,1,2. So the formula is a little bit different.  
 
-For the 2-class regressions, the response is log(P/(1-p))
-For the 3-class regession, firstly we choose a response class as a reference or "base" like class "0" in this project. 
-Then we use log(P1/P0), log(P2/P0) as responses and do the regressions respectively. The other things are almost the same. 
+For the 2-class regressions, the response is log(P/(1-p))  
+For the 3-class regession, firstly we choose a response class as a reference or "base" like class "0" in this project.  
+Then we use log(P1/P0), log(P2/P0) as responses and do the regressions respectively. The other things are almost the same.  
 
-The result of the confusion matrix shows that the accuracy of the model is 0.833.
+The result of the confusion matrix shows that the accuracy of the model is 0.833.  
 
 ## 4.3 K-NN for "koi_disposition"  
 
@@ -411,8 +409,8 @@ knn_cm <- confusionMatrix(knn_pred,koi_testLabels_dis)
 knn_cm     # confusion matrix for 17-NN
 
 ```  
-According to the result of the K-NN method, when k = 17, the accuracy 0.638 is the best, which is not so satisfactory.
-The chooseK() function is from the rmd file of the professor.
+According to the result of the K-NN method, when k = 17, the accuracy 0.638 is the best, which is not so satisfactory.  
+The chooseK() function is from the rmd file of the professor.  
 
 ## 4.4 ROC-AUC Plot
 
@@ -423,9 +421,11 @@ loadPkg("pROC")
 pred<- predict(logmod_koi, koi_test_dis, type='probs')
 a <- roc(koi_disposition~pred[,1], data=koi_test_dis)
 auc(a) 
-plot(a) # it doesn't look so right.
+plot(a)
 
 ```
+
+Area under the curve is = 0.995 which is highly acceptable since it is greater than 0.8.  
 
 
 
@@ -442,6 +442,8 @@ plot(b)
 
 ```
 
+Area under the curve is = 0.745 which is not acceptable since it is less than 0.8. The multi-logistic model has better area under the curve than KNN model.  
+
 # 5 Conclusion  
 
 ## 5.1 Results  
@@ -452,15 +454,15 @@ So, we conclude that using random forest model to predict the `koi_disposition` 
 
 ## 5.2 Caveats  
 
-The caveats we dealt with during this project were our high feature count and our numerical features mostly not having normal distributions. Because of the high feature count, we were not able to use stepwise feature selection, we could not read the output of the pairs-plot, and our KNN model ultimately performed poorly.
+The caveats we dealt with during this project were our high feature count and our numerical features mostly not having normal distributions. Because of the high feature count, we were not able to use stepwise feature selection, we could not read the output of the pairs-plot, and our KNN model ultimately performed poorly.  
 
 ## 5.3 Citations
 
-Dataset - https://www.kaggle.com/nasa/kepler-exoplanet-search-results
+Dataset - https://www.kaggle.com/nasa/kepler-exoplanet-search-results  
 
 * https://www.nasa.gov/mission_pages/kepler/overview/index.html  
 * https://www.kaggle.com/nasa/kepler-exoplanet-search-results  
 * https://www.nasa.gov/ames/kepler/nasas-kepler-discovers-first-earth-size-planet-in-the-habitable-zone-of-another-star  
-* https://www.nasa.gov/vision/universe/newworlds/Osiris_leaks.html
+* https://www.nasa.gov/vision/universe/newworlds/Osiris_leaks.html  
 
 
