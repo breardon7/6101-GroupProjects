@@ -1,5 +1,5 @@
 # DATS 6101-GroupProjects
-DATS 6101 Group Project Repo
+Exoplanet Classification | Solar Power Energy Generation and Carbon Abatement Analysis
 
 ## Summary
 This repository contains [Bradley Reardon](https://github.com/breardon7), [Pranay](https://github.com/Pranay-yanarp), [Quinyan](https://github.com/xczqy1111), [Jichong Wu](https://github.com/JichongWu), and [Baldur Hua](https://github.com/BaldurHua)'s final projects for George Washington University's DATS 6101: Intro to Data Science course.
