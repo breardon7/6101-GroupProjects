@@ -16,5 +16,5 @@ In this project, we classified 9,872 Kepler Objects of Interst as exoplanets/non
 [Project 2 Data Source](https://www.kaggle.com/nasa/kepler-exoplanet-search-results)
 
 ## Folders
-* Project 1 contains the RMD and PPT files for project 1.
-* Project 2 contains the RMD and PPT files for project 2.
+* Project 1 contains the RMD, PPT, and CSV files for project 1.
+* Project 2 contains the RMD, PPT, and CSV files for project 2.
