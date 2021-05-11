@@ -8,12 +8,12 @@ The objective for our projects was to apply the statistical and machine learning
 ## Project 1 - Solar Power Energy Generation and Carbon Abatement Analysis
 In this project, we determined which features affect solar power energy generation and carbon dioxide abatement by running linear regrgession models and ANOVA tests on solar panel data from 7,900 cities in the United States.
 
-[Data Source](https://www.kaggle.com/jboysen/google-project-sunroof?select=metadata.csv)
+[Project 1 Data Source](https://www.kaggle.com/jboysen/google-project-sunroof?select=metadata.csv)
 
 ## Project 2 - Exoplanet Classification
 In this project, we classified 9,872 Kepler Objects of Interst as exoplanets/non-exoplanets using KNN, Logistic Regression, and Random Forest models.
 
-[Data Source](https://www.kaggle.com/nasa/kepler-exoplanet-search-results)
+[Project 2 Data Source](https://www.kaggle.com/nasa/kepler-exoplanet-search-results)
 
 ## Folders
 * Project 1 contains the RMD and PPT files for project 1.
